@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  sitemap.xml: the list of every page we want search engines to find (Day 14).
+  Each <url> holds one <loc> (location) = the page's full official address,
+  exactly the same as that page's canonical link.
+
+  - Case studies and journal articles are listed by their ?project= / ?post= address
+    (one per item in js/projects.js and js/posts.js). ADD A LINE HERE whenever you
+    add a project or an article, and delete the line if you remove one.
+  - Not listed on purpose: case-study.html and journal-post.html on their own
+    (they show "not found"), and 404.html.
+  - No <lastmod> dates: Google ignores them unless they are kept accurate.
+-->
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- The 7 main pages -->
+  <url><loc>https://www.example-trinetra.com/</loc></url>
+  <url><loc>https://www.example-trinetra.com/work.html</loc></url>
+  <url><loc>https://www.example-trinetra.com/about.html</loc></url>
+  <url><loc>https://www.example-trinetra.com/services.html</loc></url>
+  <url><loc>https://www.example-trinetra.com/consultation.html</loc></url>
+  <url><loc>https://www.example-trinetra.com/contact.html</loc></url>
+  <url><loc>https://www.example-trinetra.com/journal.html</loc></url>
+
+  <!-- Case studies (ids from js/projects.js) -->
+  <url><loc>https://www.example-trinetra.com/case-study.html?project=mitti-cafe</loc></url>
+  <url><loc>https://www.example-trinetra.com/case-study.html?project=kaveri-textiles</loc></url>
+  <url><loc>https://www.example-trinetra.com/case-study.html?project=shree-sweets</loc></url>
+  <url><loc>https://www.example-trinetra.com/case-study.html?project=lotus-clinic</loc></url>
+  <url><loc>https://www.example-trinetra.com/case-study.html?project=nandi-motors</loc></url>
+  <url><loc>https://www.example-trinetra.com/case-study.html?project=rangoli-boutique</loc></url>
+
+  <!-- Journal articles (slugs from js/posts.js) -->
+  <url><loc>https://www.example-trinetra.com/journal-post.html?post=why-your-logo-is-not-your-brand</loc></url>
+  <url><loc>https://www.example-trinetra.com/journal-post.html?post=will-people-read-your-signboard</loc></url>
+  <url><loc>https://www.example-trinetra.com/journal-post.html?post=choosing-brand-colours</loc></url>
+  <url><loc>https://www.example-trinetra.com/journal-post.html?post=plan-your-festival-campaign-early</loc></url>
+</urlset>

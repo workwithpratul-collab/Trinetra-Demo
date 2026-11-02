@@ -1,0 +1,555 @@
+/* =========================================================
+   Trinetra Creations — shared design system
+   Every page links this file. Change a variable here and
+   the whole site updates.
+   ========================================================= */
+
+/* ---------- 1. Design tokens (CSS variables) ----------
+   :root = the <html> element, so these are available everywhere. */
+:root {
+  /* Colours: near-black base + violet → magenta → saffron accents */
+  --color-bg: #0b0a0f;          /* page background (near-black, slightly violet) */
+  --color-surface: #15131c;     /* cards, footer */
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-text: #f4f1f8;        /* main text (high contrast on bg) */
+  --color-text-muted: #a9a3b8;  /* secondary text (still passes WCAG AA on bg) */
+  --color-violet: #7b2ff7;
+  /* Magenta: was #e0218a. 3% darker (fix session) so WHITE button text passes
+     WCAG AA: white on #e0218a = 4.42:1 (fails, needs 4.5), on #d91e85 = 4.69:1. */
+  --color-magenta: #d91e85;
+  --color-saffron: #ff9933;
+
+  /* The signature gradient, reused for buttons, text and lines */
+  --gradient-brand: linear-gradient(
+    120deg,
+    var(--color-violet),
+    var(--color-magenta),
+    var(--color-saffron)
+  );
+
+  /* Gradient for SMALL WHITE TEXT (fix session): number badges, ticks, selected pills.
+     Violet → magenta only. White on the saffron end is only 2.13:1, far below
+     the 4.5:1 that 14px text needs; on violet → magenta it never drops below 4.69:1.
+     The full brand gradient (with saffron) stays everywhere else. */
+  --gradient-chip: linear-gradient(120deg, var(--color-violet), var(--color-magenta));
+
+  /* Frosted glass (used by nav now, cards later) */
+  --glass-bg: rgba(21, 19, 28, 0.6);
+  --glass-blur: blur(14px);
+
+  /* Fonts: modern serif for headlines, clean sans for body */
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-brand: "Raleway", "Inter", system-ui, sans-serif;  /* wordmark + tagline */
+
+  /* Fluid type sizes: clamp(min, preferred, max) grows with screen width */
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+  --text-2xl: clamp(2rem, 1.4rem + 3vw, 3.25rem);
+  --text-hero: clamp(2.75rem, 1.5rem + 6vw, 6rem);
+
+  /* Spacing scale (based on 4px steps) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  /* Layout + shape */
+  --container-max: 1200px;
+  --gutter: 1rem;               /* side padding on phones */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-pill: 999px;
+  --nav-height: 72px;
+
+  /* Motion: one place to tune every transition */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration: 300ms;
+}
+
+@media (min-width: 768px) {
+  :root { --gutter: 2rem; }
+}
+
+/* ---------- 2. Minimal reset ----------
+   Removes inconsistent browser defaults. */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+* { margin: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;               /* lets the footer sit at the bottom */
+  flex-direction: column;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  /* Day 13: a word too long for its line (a long business name, an email
+     address) may break onto the next line instead of pushing the page sideways.
+     Normal words never break: this only kicks in when a word can't fit at all. */
+  overflow-wrap: break-word;
+}
+
+/* Day 13: the "Skip to content" link jumps to <main>. Without this, <main>
+   lands at the very top of the screen, under the sticky header. */
+main { flex: 1; scroll-margin-top: var(--nav-height); }
+
+img, svg, video { display: block; max-width: 100%; height: auto; }
+
+a { color: inherit; text-decoration: none; }
+
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+ul[role="list"] { list-style: none; padding: 0; }
+
+/* ---------- 3. Typography ---------- */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+/* Day 13: headings, buttons and label/value pairs sit in grids and flex rows,
+   where "break-word" (above) isn't enough: those boxes size themselves to their
+   longest word first. "anywhere" lets them shrink, so a 40-letter name wraps
+   instead of widening the page. Normal-length words are never split. */
+h1, h2, h3, h4, legend, dt, dd, .btn { overflow-wrap: anywhere; }
+
+h1 { font-size: var(--text-hero); }
+h2 { font-size: var(--text-2xl); }
+h3 { font-size: var(--text-xl); }
+
+p { max-width: 65ch; }         /* comfortable reading line length */
+
+/* Gradient-filled text, e.g. <span class="text-gradient">vision</span> */
+.text-gradient {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- 4. Utilities ---------- */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Hides text visually but keeps it for screen readers */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* "Skip to content" link: only appears when focused with Tab */
+.skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 1000;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-text);
+  color: var(--color-bg);
+  border-radius: var(--radius-sm);
+  transform: translateY(-150%);
+}
+.skip-link:focus { transform: translateY(0); }
+
+/* Visible keyboard focus ring everywhere (only for keyboard users) */
+:focus-visible {
+  outline: 2px solid var(--color-saffron);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---------- 5. Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  letter-spacing: 0.02em;
+  transition: transform var(--duration) var(--ease-out),
+              box-shadow var(--duration) var(--ease-out);
+}
+.btn:hover { transform: translateY(-2px); }
+
+/* Primary: gradient fill */
+.btn--primary {
+  background: var(--gradient-brand);
+  background-size: 200% 100%;
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(224, 33, 138, 0.3);
+}
+.btn--primary:hover { box-shadow: 0 10px 32px rgba(224, 33, 138, 0.45); }
+
+/* Ghost: outline only */
+.btn--ghost {
+  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.03);
+}
+.btn--ghost:hover { border-color: var(--color-magenta); }
+
+/* ---------- 6. Site header / navigation ---------- */
+.site-header {
+  position: sticky;            /* stays at the top while scrolling */
+  top: 0;
+  z-index: 100;
+  height: var(--nav-height);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);          /* frosted glass */
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.nav {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo: eye mark + wordmark */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 44px;            /* Day 13: tap area 44px tall (the mark is 40px) */
+}
+/* Logo mark image (assets/logo.svg); height sets the size, width follows.
+   flex-shrink: 0 stops the mark being squashed on narrow phones. */
+.logo__mark { width: auto; height: 40px; flex-shrink: 0; }
+
+/* "TRINETRA CREATIONS": Raleway medium, wide-spaced capitals.
+   Smaller on phones so it fits beside the mark and the menu button. */
+/* Day 13: sizes in px (12px / 14px, the same as 0.75rem / 0.875rem at normal
+   settings). The wordmark is part of the LOGO, like the picture beside it, so it
+   doesn't grow when a visitor sets a bigger browser font: at 200% it pushed the
+   menu button off the screen. All the real text still grows. */
+.logo__wordmark {
+  font-family: var(--font-brand);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;   /* the HTML stays "Trinetra Creations" */
+  line-height: 1.2;
+  white-space: nowrap;
+}
+@media (min-width: 480px) {
+  .logo__wordmark { font-size: 14px; letter-spacing: 0.25em; }
+}
+
+/* Hamburger button (phones only) */
+.nav-toggle {
+  display: grid;
+  place-items: center;
+  width: 44px; height: 44px;   /* 44px = minimum comfortable tap size */
+  border-radius: var(--radius-sm);
+}
+.nav-toggle__bar {
+  display: block;
+  width: 22px; height: 2px;
+  background: currentColor;
+  transition: transform var(--duration) var(--ease-out), opacity var(--duration);
+}
+.nav-toggle__bar + .nav-toggle__bar { margin-top: 5px; }
+
+/* Turn the 3 bars into an X when the menu is open */
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Mobile menu: full-screen panel, hidden until opened */
+.nav-menu {
+  /* Note: backdrop-filter on .site-header makes the header the reference
+     box for this fixed panel, so we size it explicitly instead of using
+     bottom: 0 (which would collapse it to zero height). */
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  height: calc(100vh - var(--nav-height));   /* fallback for older browsers */
+  height: calc(100dvh - var(--nav-height));  /* dvh = visible height on phones */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-8) var(--gutter);
+  background: var(--color-bg);
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity var(--duration) var(--ease-out),
+              transform var(--duration) var(--ease-out),
+              visibility var(--duration);
+}
+.nav-menu.is-open {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Day 13: gap 16px → 8px because each link got 8px taller (below),
+   so the links sit exactly where they did before. */
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+}
+
+/* Each link gets a gradient underline on hover / when current.
+   Day 13: inline-block = the padding now counts as tappable height
+   (on a plain inline link it didn't): 38px → 46px tall on phones. */
+.nav-links a {
+  position: relative;
+  display: inline-block;
+  padding-block: var(--space-1);
+  color: var(--color-text-muted);
+  transition: color var(--duration);
+}
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  /* Day 13: lifted by the same 4px the link grew, so the line stays under the word */
+  left: 0; bottom: var(--space-1);
+  width: 100%; height: 2px;
+  background: var(--gradient-brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration) var(--ease-out);
+}
+.nav-links a:hover,
+.nav-links a[aria-current="page"] { color: var(--color-text); }
+.nav-links a:hover::after,
+.nav-links a[aria-current="page"]::after { transform: scaleX(1); }
+
+/* Stop the page scrolling behind the open mobile menu */
+body.nav-open { overflow: hidden; }
+
+/* Desktop: show links inline, hide hamburger.
+   Day 13: was 900px, but from 900 to ~940px the logo and the links touched.
+   64em = 1024px at normal settings. "em" in a media query follows the visitor's
+   browser font size: with text set to 200%, 64em = 2048px, so they get the
+   hamburger menu instead of a row of big links that doesn't fit.
+   KEEP IN STEP with desktopQuery in js/layout.js. */
+@media (min-width: 64em) {
+  .nav-toggle { display: none; }
+
+   .nav-menu {
+    position: static;
+    height: auto;
+    overflow: visible;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-8);
+    padding: 0;
+    background: none;
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+  }
+
+  .nav-links {
+    flex-direction: row;
+    gap: var(--space-6);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 500;
+  }
+  /* Day 13: 12px of padding above and below = a 46px tall tap area
+     (it was 25px) inside the 72px header. The underline moves up with it. */
+  .nav-links a { padding-block: var(--space-3); }
+  .nav-links a::after { bottom: calc(var(--space-3) - 2px); }
+}
+
+/* ---------- 7. Footer ---------- */
+.site-footer {
+  position: relative;
+  margin-top: var(--space-24);
+  padding-block: var(--space-16) var(--space-8);
+  background: var(--color-surface);
+}
+/* Thin gradient line across the top of the footer */
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--gradient-brand);
+}
+
+.footer-grid {
+  display: grid;
+  gap: var(--space-12);
+}
+@media (min-width: 768px) {
+  .footer-grid { grid-template-columns: 2fr 1fr 1fr; }
+}
+
+/* Day 13: the footer logo keeps its 44px tap height, but -2px above and below
+   means it takes the same room as before (40px), so the lines under it don't move. */
+.site-footer .logo { margin-block: -2px; }
+
+.footer-tagline {
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+}
+
+/* "Imagine · Believe · Achieve": small, muted, lightly spaced */
+.footer-motto {
+  margin-top: var(--space-2);
+  font-family: var(--font-brand);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  letter-spacing: 0.12em;
+  color: var(--color-text-muted);
+}
+
+/* Copyright + GST: a row with a gap; wraps onto two lines on phones */
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-6);
+  row-gap: var(--space-1);
+}
+
+/* CEO credit: smaller than the tagline, same muted colour */
+.footer-credit {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.footer-heading {
+  margin-bottom: var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* Day 13: each footer link is a 44px tall tap row (was 20px tall with 8px gaps,
+   too fiddly for a thumb). No gap needed: the rows themselves give the spacing. */
+.footer-list { display: grid; }
+.footer-list a {
+  display: inline-flex;
+  align-items: center;         /* text in the middle of its 44px row */
+  min-height: 44px;
+  overflow-wrap: anywhere;     /* the email address may break when text is very large (flex items need "anywhere") */
+  transition: color var(--duration);
+}
+.footer-list a:hover { color: var(--color-saffron); }
+
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-12);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ---------- 7b. Floating WhatsApp button (Day 9) ----------
+   Added to every page by js/layout.js.
+   position: fixed = stays in the same spot on screen while the page scrolls.
+   env(safe-area-inset-...) = extra room on phones with rounded corners or a
+   home bar (iPhone), so the button is never cut off. max() picks the bigger value. */
+.wa-float {
+  position: fixed;
+  right: max(var(--space-4), env(safe-area-inset-right));
+  bottom: max(var(--space-4), env(safe-area-inset-bottom));
+  z-index: 90;                      /* above the page, BELOW the header (100), so the open menu covers it */
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  /* WhatsApp green, so people recognise it at a glance.
+     Near-black icon: about 10:1 contrast (white on this green is under 2:1). */
+  background: #25d366;
+  color: #0b0a0f;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  transition: transform var(--duration) var(--ease-out), box-shadow var(--duration);
+}
+.wa-float:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+}
+.wa-float:focus-visible { border-radius: 50%; }   /* round focus ring, not the 4px default */
+
+/* Room at the very bottom of the footer so the button never covers the GST line */
+.site-footer { padding-bottom: calc(var(--space-8) + 72px); }
+
+/* ---------- 7c. Page-to-page fade (Day 12) ----------
+   VIEW TRANSITIONS: when a link opens another page of THIS site, the browser
+   takes a picture of the old page, loads the new one, and cross-fades the two.
+   Pure CSS: no JavaScript, so it can't break the page if a script fails.
+   Browsers that don't know view transitions simply load the next page
+   normally (the fallback is "no fade", never "no page").
+
+   THE SWITCH ITSELF is NOT in this file: `@view-transition { navigation: auto; }`
+   sits in a small <style> at the top of EVERY page's <head>. We tried it here
+   first, but on fast page loads Chrome decided "no fade" before this file was
+   applied (3 fades out of 20). Written in the page itself: 20 out of 20.
+   "auto" = fade for normal link clicks and Back/Forward (not for reloads).
+   Below is only HOW the fade looks. */
+
+/* The whole page ("root") fades. ~280ms feels smooth without feeling slow. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 280ms;
+  animation-timing-function: ease-out;
+}
+
+/* Give the header and the WhatsApp button their OWN name. Named parts are
+   pictured separately: they sit in the same place on every page, so they
+   stay perfectly still while only the page content fades underneath. */
+.site-header { view-transition-name: site-header; }
+.wa-float    { view-transition-name: wa-float; }
+
+/* ---------- 8. Reduced motion ----------
+   If the visitor's OS asks for less motion, switch it off. */
+@media (prefers-reduced-motion: reduce) {
+  /* (No page fade either: that switch is in each page's <head>, Day 12) */
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

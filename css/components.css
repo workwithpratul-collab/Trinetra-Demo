@@ -1,0 +1,606 @@
+/* =========================================================
+   Trinetra Creations: shared components (Day 3)
+   Reusable building blocks for ANY page. Loaded after
+   css/style.css, so every variable from the design system works here.
+   ========================================================= */
+
+/* ---------- 1. Section rhythm ----------
+   Every content block below a hero is a <section class="section">.
+   Same vertical spacing everywhere = a calm, consistent page. */
+.section {
+  padding-block: var(--space-16);
+}
+@media (min-width: 768px) {
+  .section { padding-block: var(--space-24); }
+}
+
+/* Section heading group: small label + big title + optional intro text */
+.section-head {
+  max-width: 44rem;
+  margin-bottom: var(--space-12);
+}
+.section-head p {
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+}
+
+/* "Eyebrow" = the small all-caps label above a headline */
+.eyebrow {
+  display: inline-block;
+  margin-bottom: var(--space-3);
+  font-family: var(--font-brand);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--color-saffron);
+}
+
+/* ---------- 2. Frosted-glass card ----------
+   Semi-transparent background + blur of whatever sits behind it. */
+.card {
+  position: relative;
+  display: block;
+  padding: var(--space-8) var(--space-6);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;                      /* keeps the hover line inside the rounded corners */
+  transition: transform var(--duration) var(--ease-out),
+              border-color var(--duration) var(--ease-out);
+}
+
+/* ---------- 3. Badge ----------
+   A small pill label, e.g. "Sample". */
+.badge {
+  display: inline-block;
+  padding: 0.2em 0.75em;
+  border-radius: var(--radius-pill);
+  background: rgba(11, 10, 15, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+/* ---------- 4. Scroll reveal ----------
+   Any element with data-scroll fades up when it enters the screen.
+   SAFETY: elements are only hidden when js/motion.js has added the
+   "motion-ready" class to <html>. No JavaScript = no hiding = everything visible.
+   data-scroll-delay="1"/"2"/"3" staggers items in a row.
+
+   RULE OF THUMB (learned from the services-card bug):
+   put data-scroll on a WRAPPER, not on an element that has its own
+   hover transform or transition (like .card). These rules are more specific
+   (.motion-ready [data-scroll].is-visible beats .service-card:hover), so they
+   would replace the card's own transition, add their delay to every hover,
+   and lock its transform at "none" (no hover lift).
+   Note: opacity: 0 does NOT stop clicks. A hidden element is still clickable. */
+.motion-ready [data-scroll] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 800ms var(--ease-out), transform 800ms var(--ease-out);
+}
+.motion-ready [data-scroll].is-visible {
+  opacity: 1;
+  transform: none;
+}
+.motion-ready [data-scroll-delay="1"] { transition-delay: 100ms; }
+.motion-ready [data-scroll-delay="2"] { transition-delay: 200ms; }
+.motion-ready [data-scroll-delay="3"] { transition-delay: 300ms; }
+
+/* Belt and braces: motion.js never adds "motion-ready" for these visitors,
+   but if it ever did, this keeps everything visible and still. */
+@media (prefers-reduced-motion: reduce) {
+  .motion-ready [data-scroll] { opacity: 1; transform: none; }
+}
+
+/* ---------- 5. Project grid + card (moved from home-sections.css on Day 4) ----------
+   Used by the Home page (3 featured) and the Work page (all projects).
+   The card HTML comes from js/project-card.js. */
+.work-grid {
+  display: grid;
+  gap: var(--space-6);
+}
+@media (min-width: 768px) { .work-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* THE HIDDEN-ATTRIBUTE TRAP
+   <li hidden> only works because the BROWSER's built-in stylesheet says
+   [hidden] { display: none; }. Browser defaults always lose to our own CSS,
+   so any rule like .project-card { display: flex; } would quietly make
+   "hidden" cards visible again, and the filter would look broken.
+   This rule is ours, and it's more specific (class + attribute beats class),
+   so hidden cards stay hidden whatever display rules we add later. */
+.project-card[hidden] { display: none; }
+
+/* border-radius (Day 6): the keyboard focus ring follows the element's corners.
+   Without this, the global :focus-visible rule (4px) drew a sharp-cornered ring
+   around the card's 16px-rounded image. */
+.work-card { display: block; border-radius: var(--radius-md); }
+
+/* The "image": a gradient made from the project's two colours.
+   --from and --to are set per card by js/project-card.js.
+   aspect-ratio keeps it 4:3 at any width. */
+.work-card__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-md);
+  background:
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.25), transparent 45%),
+    linear-gradient(135deg, var(--from), var(--to));
+  transition: transform 500ms var(--ease-out);
+}
+.work-card:hover .work-card__media,
+.work-card:focus-visible .work-card__media { transform: scale(1.02); }
+
+/* Optional project photo (Day 6), laid over the gradient.
+   object-fit: cover = fill the 4:3 box and crop the edges, never stretch.
+   overflow on the parent isn't needed: border-radius: inherit rounds the photo itself. */
+.work-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+.work-card__badge {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+}
+
+.work-card__body { padding-top: var(--space-4); }
+.work-card__meta {
+  font-size: var(--text-sm);
+  color: var(--color-saffron);
+}
+.work-card__title {
+  margin-top: var(--space-1);
+  font-size: 1.375rem;
+}
+.work-card__client {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ---------- 6. Page intro (inner pages) ----------
+   A shorter "hero" for every page except Home: label, big headline, intro text,
+   with a soft brand-colour glow behind. */
+.page-intro {
+  position: relative;
+  isolation: isolate;
+  padding-block: var(--space-16) var(--space-8);
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .page-intro { padding-block: var(--space-24) var(--space-12); }
+}
+.page-intro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 85% 0%, rgba(224, 33, 138, 0.35), rgba(123, 47, 247, 0.2) 30%, transparent 60%),
+    radial-gradient(circle at 0% 100%, rgba(255, 153, 51, 0.15), transparent 40%);
+  /* Fade the glow out towards the bottom, so it doesn't end in a hard line.
+     A mask: black = fully visible, transparent = invisible. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+}
+.page-intro h1 { max-width: 14ch; }
+.page-intro__lead {
+  margin-top: var(--space-6);
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+}
+
+/* ---------- 7. Closing call-to-action band (moved from home-sections.css on Day 4) ----------
+   A dark panel with a slowly drifting brand gradient glow behind the text. */
+.cta-band {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: var(--space-16) var(--space-6);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  text-align: center;
+}
+.cta-band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--gradient-brand);
+  background-size: 200% 200%;
+  opacity: 0.35;
+  animation: cta-drift 12s ease-in-out infinite alternate;
+}
+.cta-band h2 { max-width: 20ch; margin-inline: auto; }
+.cta-band p {
+  margin: var(--space-4) auto 0;
+  font-size: var(--text-lg);
+  color: var(--color-text);
+}
+.cta-band .btn { margin-top: var(--space-8); }
+
+@keyframes cta-drift {
+  from { background-position: 0% 50%; }
+  to   { background-position: 100% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-band::before { animation: none; }
+}
+
+/* ---------- 8. Forms (moved from consultation.css on Day 9) ----------
+   Used by the Free Consultation form AND the Contact form.
+   Structure: .form-card > form.form > .field (label + control + hint + error). */
+.form-card {
+  max-width: 50rem;
+  padding: var(--space-6) var(--space-4);
+}
+@media (min-width: 768px) {
+  .form-card { padding: var(--space-12); }
+}
+
+/* A variable that only exists inside the form.
+   Light pink-red: about 7:1 contrast on our dark card, so the errors are easy to read. */
+.form {
+  --color-error: #ff7a90;
+}
+
+.form {
+  display: grid;
+  gap: var(--space-6);
+  /* Draw the browser's built-in parts (dropdown list, checkbox ticks) in dark mode */
+  color-scheme: dark;
+}
+/* The hidden-attribute trap (Day 4): display: grid above would beat the browser's
+   [hidden] rule, and the form would stay visible beside the thank-you message. */
+.form[hidden] { display: none; }
+
+/* Phones: one field per row. Tablets and up: two per row. */
+.form-grid {
+  display: grid;
+  gap: var(--space-6);
+}
+@media (min-width: 640px) {
+  .form-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* One field = label + control + (hint) + (error) */
+.field {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+}
+.field label,
+.field legend {
+  font-weight: 500;
+}
+.field__optional {
+  font-weight: 400;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.field__hint {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* Text boxes, dropdowns and the message box share one look */
+/* :not(checkbox, radio): tick boxes and radio buttons are NOT text boxes (Day 10 fix).
+   :not() with a list scores like its most specific item (an attribute), so the
+   specificity is unchanged (0-2-1) and the error rule below still wins. */
+.form input:not([type="checkbox"], [type="radio"]),
+.form select,
+.form textarea {
+  width: 100%;
+  min-height: 48px;                 /* comfortable tap size */
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-sm);
+  background: rgba(11, 10, 15, 0.6);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 1rem;                  /* 16px or more stops iPhones zooming in when you tap a field */
+  transition: border-color var(--duration), box-shadow var(--duration);
+}
+.form textarea { resize: vertical; min-height: 8rem; }
+.form ::placeholder { color: #7d778c; opacity: 1; }   /* Firefox fades placeholders unless opacity: 1 */
+
+/* Hover + focus: brand colour border and a soft glow */
+.form input:not([type="checkbox"], [type="radio"]):hover,
+.form select:hover,
+.form textarea:hover { border-color: rgba(255, 255, 255, 0.35); }
+
+.form input:focus-visible,
+.form select:focus-visible,
+.form textarea:focus-visible {
+  outline: 2px solid var(--color-saffron);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+/* ERROR STATE. We style from aria-invalid="true", the same attribute screen
+   readers use, so what people see and hear always match (like aria-pressed on Day 4).
+   SPECIFICITY: :is() scores like its most specific item (here an element), so this
+   rule scores 0-2-1, the SAME as the base ".form input:not([type=checkbox])" rule,
+   and wins because it comes later. A plain .form [aria-invalid="true"] scores only
+   0-2-0, so it would lose (no red border), and it would also put a glow around
+   the checkbox <fieldset>. (On hover the grey hover border wins, but the red glow stays.) */
+.form :is(input, select, textarea)[aria-invalid="true"] {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 1px var(--color-error);
+}
+
+/* The error message under a field. Empty = takes no space at all. */
+.field__error {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-error);
+}
+.field__error:empty { display: none; }
+/* A "!" icon so the error isn't shown by colour alone (some people can't tell red apart) */
+.field__error::before {
+  content: "!";
+  flex-shrink: 0;
+  display: inline-grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 50%;
+  background: var(--color-error);
+  color: var(--color-bg);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* Two message boxes with the same look:
+   .form-summary = "Please fix 2 things below" at the top of the form
+   .form-status  = "Sorry, your message didn't send" next to the button (Day 9) */
+.form-summary,
+.form-status {
+  max-width: none;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 122, 144, 0.08);
+  font-weight: 500;
+  color: var(--color-error);
+}
+.form-summary:empty,
+.form-status:empty { display: none; }
+
+/* A friendly info note (Day 10: "We've added your order…" on the consultation form).
+   Saffron, not red: it's information, not an error. */
+.form-note {
+  max-width: none;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid rgba(255, 153, 51, 0.4);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 153, 51, 0.08);
+  font-size: var(--text-sm);
+}
+.form-note[hidden] { display: none; }
+
+/* ---------- Checkboxes ---------- */
+/* <fieldset> has a border and padding by default: remove them */
+.checks {
+  border: 0;
+  padding: 0;
+  min-width: 0;                     /* fieldsets refuse to shrink on phones without this */
+}
+.checks legend {
+  padding: 0;
+  margin-bottom: var(--space-2);    /* <legend> ignores the fieldset's grid gap */
+}
+
+.checks__grid {
+  display: grid;
+  gap: var(--space-2);
+}
+@media (min-width: 640px) {
+  .checks__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 900px) {
+  .checks__grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Each option is a tile. The <label> wraps the box, so the WHOLE tile is clickable. */
+.check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 48px;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-sm);
+  background: rgba(11, 10, 15, 0.6);
+  cursor: pointer;
+  transition: border-color var(--duration), background-color var(--duration);
+}
+.check:hover { border-color: rgba(255, 255, 255, 0.35); }
+
+/* accent-color = recolour the browser's own checkbox (no custom drawing needed) */
+.check input {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+  accent-color: var(--color-magenta);
+  cursor: pointer;
+}
+
+/* :has() = "a .check that HAS a checked box inside". Highlights the chosen tiles. */
+.check:has(input:checked) {
+  border-color: var(--color-magenta);
+  background: rgba(224, 33, 138, 0.12);
+}
+/* Error state for the whole group (set by the script on the fieldset) */
+.checks[aria-invalid="true"] .check { border-color: var(--color-error); }
+
+/* ---------- Send button + privacy line ---------- */
+.form__submit {
+  justify-self: start;              /* don't stretch across the grid */
+  min-height: 48px;
+  padding-inline: var(--space-8);
+  font-size: var(--text-base);
+}
+@media (max-width: 479px) {
+  .form__submit { justify-self: stretch; justify-content: center; }  /* full width on small phones */
+}
+.form__privacy {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* LOADING STATE (Day 9): while the form is sending, js/forms.js disables the
+   button, changes its text to "Sending…" and adds .is-loading.
+   ::before draws a small spinning ring: a circle with one transparent side. */
+.form__submit:disabled { cursor: progress; opacity: 0.85; transform: none; }
+.form__submit.is-loading::before {
+  content: "";
+  width: 1em;
+  height: 1em;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;           /* the one bright side = what you see spinning */
+  border-radius: 50%;
+  animation: form-spin 0.8s linear infinite;
+}
+@keyframes form-spin { to { transform: rotate(360deg); } }
+/* Reduced motion: the global rule in style.css stops the spin;
+   the "Sending…" text still tells everyone what's happening. */
+
+/* HONEYPOT (Day 9): a field for spam bots only.
+   Moved far off-screen, NOT display: none, because some bots skip fields
+   that are display: none. People never see it; screen readers skip it
+   (aria-hidden on the wrapper) and Tab skips it (tabindex="-1" on the input). */
+.form-hp {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Links inside the send-error message ("WhatsApp us", "email us") */
+.form-status a { text-decoration: underline; color: var(--color-text); }
+
+/* ---------- Thank-you message ---------- */
+.form-success {
+  text-align: center;
+  padding-block: var(--space-8);
+}
+.form-success:focus { outline: none; }    /* focused by script only; a ring here would look odd */
+.form-success[hidden] { display: none; }  /* the hidden-attribute trap (Day 4) */
+.form-success__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: var(--space-6);
+  border-radius: 50%;
+  background: var(--gradient-brand);
+  font-size: 1.75rem;
+  color: #fff;
+}
+.form-success h3 { font-size: var(--text-2xl); }
+.form-success p {
+  margin: var(--space-4) auto 0;
+  color: var(--color-text-muted);
+}
+.form-success strong { color: var(--color-text); }
+
+/* ---------- 9. Previous / next + "not found" (moved from case.css on Day 11) ----------
+   Shared by the case study (case-study.html) and the Journal article
+   (journal-post.html). The "case-" names are kept so js/case.js didn't need changing. */
+.case-pager {
+  display: grid;
+  gap: var(--space-4);
+}
+@media (min-width: 768px) { .case-pager { grid-template-columns: 1fr 1fr; } }
+
+/* Each link is a frosted card; whole card is clickable */
+.case-pager__link {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  overflow-wrap: anywhere;   /* Day 13: with very large text, a long title word breaks instead of widening the page */
+  transition: border-color var(--duration), transform var(--duration) var(--ease-out);
+}
+.case-pager__link:hover,
+.case-pager__link:focus-visible {
+  border-color: var(--color-magenta);
+  transform: translateY(-2px);
+}
+.case-pager__link--next { text-align: right; }
+.case-pager__dir {
+  font-size: var(--text-sm);
+  color: var(--color-saffron);
+}
+.case-pager__title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+}
+
+/* "We couldn't find that…" message */
+.case-missing a:not(.btn) { color: var(--color-saffron); text-decoration: underline; }
+.case-missing h1 { max-width: 16ch; }
+.case-missing__slug {
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;                /* a very long typed address can't push the page sideways */
+}
+.case-missing__slug code {
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+.case-missing__btn { margin-top: var(--space-8); }
+
+/* ---------- 10. GSAP motion helpers (Day 12) ----------
+   Both elements below are only created / switched on by js/motion-gsap.js,
+   so without GSAP (or with reduced motion) these rules simply never apply. */
+
+/* Scroll-progress bar: a 2px brand-gradient line sitting on the header's
+   bottom border. It is always full width; GSAP shrinks it with scaleX
+   (0 = empty, 1 = full), which is cheap for the browser to animate.
+   pointer-events: none = clicks and hovers go straight through it,
+   so it can never block the links under the header. */
+.scroll-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;                       /* covers the header's 1px border */
+  height: 2px;
+  background: var(--gradient-brand);
+  transform: scaleX(0);
+  transform-origin: left;             /* grow from the left edge */
+  pointer-events: none;
+}
+
+/* Parallax layer: GSAP changes --parallax-y while you scroll (0% → 20%).
+   `translate` is separate from `transform`, so the Home hero's zoom-in
+   (transform: scale, css/home.css) and this slide add up instead of clashing.
+   will-change: tells the browser to keep this layer ready for smooth moving. */
+.parallax-layer {
+  translate: 0 var(--parallax-y, 0%);
+  will-change: translate;
+}

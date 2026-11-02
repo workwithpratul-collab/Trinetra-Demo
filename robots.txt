@@ -1,0 +1,17 @@
+# robots.txt: instructions for search-engine robots ("crawlers").
+# Lines starting with # are comments; robots ignore them.
+#
+# ======================================================================
+# PREVIEW MODE (Day 15): THE WHOLE SITE IS BLOCKED FROM SEARCH ENGINES.
+# Preview site: not for search engines, so we ask every robot
+# to stay away from every page.
+#
+#   User-agent: *   = these rules are for every robot (Google, Bing, ...)
+#   Disallow: /     = do NOT visit any address on this site
+# ======================================================================
+User-agent: *
+Disallow: /
+
+# Sitemap line switched OFF during the preview (no point pointing robots
+# to a page list they are not allowed to visit).
+# Sitemap: https://www.example-trinetra.com/sitemap.xml

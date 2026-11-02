@@ -1,0 +1,64 @@
+/* =========================================================
+   Trinetra Creations: Work page styles (Day 4)
+   Loaded only by work.html, after style.css and components.css.
+   The cards, page intro and CTA band come from components.css;
+   this file only styles the filter bar.
+   ========================================================= */
+
+/* The projects section sits right under the page intro, so it needs no top gap.
+   Two classes (.section.work-projects) beat the one-class .section rule. */
+.section.work-projects { padding-top: 0; }
+
+/* ---------- 1. Filter bar ---------- */
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-12);
+}
+
+/* SAME TRAP as .project-card: our display: flex above would beat the browser's
+   built-in [hidden] rule, so the bar would show even while it's meant to be hidden
+   (that is, before JavaScript has shown it). This rule wins back. */
+.filters[hidden] { display: none; }
+
+.filters__buttons {
+  display: flex;
+  flex-wrap: wrap;                 /* buttons flow onto extra rows on phones */
+  gap: var(--space-2);
+}
+
+/* Each filter is a pill button, outline only when not selected */
+.filter-btn {
+  min-height: 44px;                /* comfortable tap size */
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: color var(--duration), border-color var(--duration), background-color var(--duration);
+}
+.filter-btn:hover {
+  color: var(--color-text);
+  border-color: var(--color-magenta);
+}
+
+/* The selected filter. We style it from aria-pressed, the same attribute
+   screen readers use, so what people see and what they hear always match. */
+.filter-btn[aria-pressed="true"] {
+  background: var(--gradient-brand);
+  border-color: transparent;
+  color: #fff;
+}
+
+/* "Showing N projects" */
+.filters__status {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* The "projects need JavaScript" message (work.js removes it once cards appear) */
+.work-fallback { color: var(--color-text-muted); }
+.work-fallback a { color: var(--color-saffron); text-decoration: underline; }

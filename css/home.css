@@ -1,0 +1,168 @@
+/* =========================================================
+   Trinetra Creations: Home page styles (Day 2)
+   Loaded only by index.html, AFTER css/style.css, so it can
+   reuse every variable from the design system.
+   ========================================================= */
+
+/* ---------- 1. Hero: photo behind text ----------
+   The hero is built from three stacked layers:
+     1. .hero__media   the photo (or a gradient glow until the photo exists)
+     2. .hero__veil    a dark-to-clear tint so the text stays readable
+     3. .hero__content the text itself
+   z-index sets the stacking order; isolation: isolate keeps those
+   layers inside the hero so they can't leak behind the header. */
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  align-items: center;
+  min-height: calc(100vh - var(--nav-height));   /* fallback for older browsers */
+  min-height: calc(100svh - var(--nav-height));  /* svh = the screen minus phone browser bars */
+  padding-block: var(--space-16);
+  overflow: hidden;                              /* clips the slow zoom below */
+}
+
+/* Layer 1: several backgrounds stacked in one rule. The FIRST one is on top.
+   Day 14: the hero.jpg photo layer was removed (decision: no hero photo). The missing
+   file caused a 404 error in the console on every visit to Home. To add a photo one day,
+   put this line back at the top of the list:
+     url("../assets/hero.jpg") center / cover no-repeat, */
+.hero__media {
+  position: absolute;
+  inset: 0;                                      /* shorthand for top/right/bottom/left: 0 */
+  z-index: -2;
+  background:
+    radial-gradient(circle at 78% 40%, rgba(224, 33, 138, 0.55), rgba(123, 47, 247, 0.35) 24%, transparent 55%),
+    radial-gradient(circle at 10% 95%, rgba(255, 153, 51, 0.28), transparent 45%),
+    var(--color-bg);
+}
+
+/* Layer 2: the veil. Three gradients stacked:
+   - bottom: fades the hero into the page background
+   - middle: dark on the left (where the text is), clearer on the right
+   - top: a light violet-to-saffron brand tint over the photo */
+.hero__veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(to bottom, transparent 70%, var(--color-bg)),
+    linear-gradient(100deg, rgba(11, 10, 15, 0.92) 0%, rgba(11, 10, 15, 0.7) 45%, rgba(11, 10, 15, 0.25) 100%),
+    linear-gradient(135deg, rgba(123, 47, 247, 0.3), rgba(224, 33, 138, 0.18) 60%, rgba(255, 153, 51, 0.12));
+}
+
+/* Layer 3: the text column */
+.hero__content { max-width: 48rem; }
+
+.hero__title {
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+.hero__line { display: block; }                  /* each line of the headline on its own row */
+
+/* Gradient line: inline-block makes the gradient fit the WIDTH OF THE TEXT
+   instead of stretching across the whole column. The padding stops the tail of
+   the "y" being cut off, because background-clip: text only paints inside the
+   element's box. Two classes beat one, so this wins over .hero__line. */
+.hero__line.text-gradient {
+  display: inline-block;
+  padding-bottom: 0.12em;
+}
+
+.hero__lead {
+  margin-top: var(--space-6);
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;                               /* buttons drop to two rows on narrow phones */
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+}
+
+/* ---------- 2. Reveal animation ----------
+   The "js" class (added by a tiny script in the page's <head>) means
+   "JavaScript is running". Only then do we hide the text, so visitors without
+   JavaScript still see everything. When home.js adds "is-ready", each block
+   slides up and fades in, one after another (the data-reveal number sets the order). */
+.js .hero [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+}
+.js.is-ready .hero [data-reveal] {
+  opacity: 1;
+  transform: none;
+  transition: opacity 900ms var(--ease-out), transform 900ms var(--ease-out);
+}
+.js.is-ready .hero [data-reveal="2"] { transition-delay: 140ms; }
+.js.is-ready .hero [data-reveal="3"] { transition-delay: 280ms; }
+
+/* The photo layer settles from slightly zoomed-in to normal size */
+.js .hero__media { transform: scale(1.1); }
+.js.is-ready .hero__media {
+  transform: none;
+  transition: transform 2600ms var(--ease-out);
+}
+
+/* ---------- 3. Page-load intro ----------
+   A full-screen curtain with the logo mark, a gradient line that draws itself,
+   and the tagline. home.js creates it and removes it again after about 2.6 seconds. */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;                                 /* above the header (100) */
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-6);
+  background: var(--color-bg);
+  transition: opacity 700ms var(--ease-out),
+              transform 700ms var(--ease-out),
+              visibility 700ms;
+}
+.intro.is-leaving {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-3%);
+}
+
+.intro__mark {
+  width: auto;
+  height: 84px;
+  animation: intro-mark 900ms var(--ease-out) both;
+}
+.intro__bar {
+  width: min(240px, 60vw);
+  height: 2px;
+  background: var(--gradient-brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: intro-bar 1100ms var(--ease-out) 300ms forwards;
+}
+.intro__tag {
+  font-family: var(--font-brand);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  letter-spacing: 0.3em;
+  color: var(--color-text-muted);
+  animation: intro-rise 800ms var(--ease-out) 600ms both;
+}
+
+/* While the curtain is up, the page behind can't scroll */
+html.intro-active { overflow: hidden; }
+
+/* @keyframes describe an animation as a series of steps */
+@keyframes intro-mark { from { opacity: 0; transform: scale(0.88); } to { opacity: 1; transform: none; } }
+@keyframes intro-bar  { to { transform: scaleX(1); } }
+@keyframes intro-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ---------- 4. Reduced motion ----------
+   style.css already makes every animation near-instant for these visitors.
+   This adds the Home-page extras: no sliding, no zoom, no staggered delay. */
+@media (prefers-reduced-motion: reduce) {
+  .js .hero [data-reveal],
+  .js .hero__media { transform: none; }
+  .js.is-ready .hero [data-reveal] { transition-delay: 0ms; }
+}

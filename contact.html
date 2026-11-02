@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- PAGE FADE opt-in (Day 12). It MUST be written here in the page, not only in
+       css/style.css: Chrome decides very early whether to fade, and on fast loads it
+       decided before style.css was applied (tested: 3 fades out of 20 that way,
+       20 out of 20 like this). The fade's timing and look live in css/style.css. -->
+  <style>
+    @view-transition { navigation: auto; }
+    @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+  </style>
+  <!-- #LINK FIX: when the address has a #target (e.g. services.html#ads), switch
+       smooth scrolling off BEFORE the page is read, so the browser jumps there
+       instantly. A smooth glide could overshoot the target on first visits.
+       Smooth scrolling comes back 2 seconds after the page has loaded. -->
+  <script>
+    if (location.hash) {
+      document.documentElement.style.scrollBehavior = "auto";
+      addEventListener("load", function () {
+        setTimeout(function () { document.documentElement.style.scrollBehavior = ""; }, 2000);
+      });
+    }
+  </script>
+
+  <!-- SEO basics: a unique title and description for this page -->
+  <title>Contact Us: Email, Call or WhatsApp | Trinetra Creations</title>
+  <meta name="description" content="Contact Trinetra Creations: email, phone, WhatsApp, studio address and working hours, or send us a message from this page.">
+  <!-- PREVIEW MODE (Day 15): keeps this private preview out of search engines.
+       Preview site: not for search engines. -->
+  <meta name="robots" content="noindex, nofollow">
+  <!-- CANONICAL = "this is the one official address of this page". Search engines list
+       THIS address even when people arrive by another one (with ?utm=…, #links, or "/index.html"). -->
+  <link rel="canonical" href="https://www.example-trinetra.com/contact.html">
+  <!-- theme-color: phones tint the browser's address bar with our near-black background -->
+  <meta name="theme-color" content="#0b0a0f">
+
+  <!-- SHARE PREVIEWS. Open Graph (og:) is read by WhatsApp, Facebook and LinkedIn; twitter:
+       by X. No image on purpose (decision: no share image), so they show a text card.
+       Same title + description as above, so every preview says the same thing. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Trinetra Creations">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:url" content="https://www.example-trinetra.com/contact.html">
+  <meta property="og:title" content="Contact Us: Email, Call or WhatsApp | Trinetra Creations">
+  <meta property="og:description" content="Contact Trinetra Creations: email, phone, WhatsApp, studio address and working hours, or send us a message from this page.">
+  <!-- "summary" = the small text card, which works without an image -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Contact Us: Email, Call or WhatsApp | Trinetra Creations">
+  <meta name="twitter:description" content="Contact Trinetra Creations: email, phone, WhatsApp, studio address and working hours, or send us a message from this page.">
+
+  <!-- Favicons: same set as every page (see index.html for why the .ico has sizes="32x32") -->
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Fonts (Raleway 500 for the wordmark) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Raleway:wght@500&display=swap">
+
+  <!-- Shared design system, shared components (incl. form styles), then this page -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/contact.css">
+
+  <!-- Order: nav/footer + contact details → shared sendForm() → this form → scroll reveal -->
+  <!-- blocking="render" (Day 12): "don't paint the page until this has run",
+       so the header and footer are already there in the very first frame. -->
+  <script src="js/layout.js" defer blocking="render"></script>
+  <script src="js/forms.js" defer></script>
+  <script src="js/contact.js" defer></script>
+  <!-- GSAP + ScrollTrigger (Day 12): the animation library, from the jsDelivr CDN.
+       PINNED to 3.15.0 (released 13 April 2026), never "@latest": an update could change
+       how the animations behave without us noticing, and brand-new releases are the
+       most likely to have bugs. integrity = fingerprint of the exact file we tested;
+       if the CDN sends anything else, the browser refuses it and js/motion.js's plain
+       CSS fade-in is used instead. -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"
+          integrity="sha384-XmJ9SoHtVOHoQUcKvFAzVXwdkKo1Ie3bhmSoIAkcdsHGaIrVJIkmozyq0FJeb/Ly"
+          crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"
+          integrity="sha384-wl5TeDVvOWt30Pbf8aSo2ZrzsOjddu3avOBvHe+p+OhJt9gP6w9YXmDkN5DK2/dF"
+          crossorigin="anonymous" defer></script>
+  <script src="js/motion-gsap.js" defer></script>    <!-- our GSAP motion (Day 12) -->
+  <script src="js/motion.js" defer></script>         <!-- CSS fallback; steps aside when GSAP runs -->
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Filled in by js/layout.js -->
+  <header class="site-header" id="site-header">
+    <noscript>
+      <nav class="nav container" aria-label="Main">
+        <a href="index.html">Trinetra Creations</a>
+        <a href="consultation.html">Free Consultation</a>
+      </nav>
+    </noscript>
+  </header>
+
+  <main id="main">
+    <!-- 1. PAGE INTRO -->
+    <section class="page-intro" aria-labelledby="page-title">
+      <div class="container">
+        <span class="eyebrow">Contact</span>
+        <h1 id="page-title">Let's talk about your <span class="text-gradient">brand.</span></h1>
+        <p class="page-intro__lead">
+          Call, WhatsApp, email or send a message below. We reply to every
+          message, usually within one working day.
+        </p>
+      </div>
+    </section>
+
+    <!-- 2. DETAILS + FORM: stacked on phones, side by side on desktop -->
+    <section class="section contact-main" aria-label="Contact details and message form">
+      <div class="container contact-grid">
+
+        <!-- LEFT: the details. Every value comes from the CONTACT object in js/layout.js:
+             an element with data-contact="email" gets the email, and so on.
+             So this page never needs editing when a number changes. -->
+        <div class="card contact-details" data-scroll>
+          <h2 class="contact-details__title">Reach us directly</h2>
+
+          <!-- WhatsApp first: most clients prefer it. wa.me link set by layout.js -->
+          <a class="btn btn--whatsapp" data-contact="whatsapp" href="#" target="_blank" rel="noopener">
+            Chat on WhatsApp<span class="visually-hidden"> (opens WhatsApp)</span>
+          </a>
+
+          <dl class="contact-list">
+            <div>
+              <dt>Email</dt>
+              <dd><a data-contact="email" href="#"></a></dd>
+            </div>
+            <div>
+              <dt>Phone</dt>
+              <dd><a data-contact="phone" href="#"></a></dd>
+            </div>
+            <div>
+              <dt>Studio</dt>
+              <!-- <address> = the right element for contact information -->
+              <dd><address data-contact="address"></address></dd>
+            </div>
+          </dl>
+
+          <h3 class="contact-hours__title">Working hours</h3>
+          <!-- Filled with one row per entry in CONTACT.hours -->
+          <dl class="contact-hours" data-contact="hours"></dl>
+        </div>
+
+        <!-- RIGHT: the message form -->
+        <div class="card form-card contact-form-card" data-scroll>
+          <h2 id="contact-form-title" class="contact-form__title">Send us a message</h2>
+          <p class="contact-form__intro">All fields are required.</p>
+
+          <!-- No action="": the Formspree address lives in ONE place,
+               FORMSPREE_URL in js/forms.js, and the script sends the form. -->
+          <form class="form" id="contact-form" method="post" aria-labelledby="contact-form-title">
+
+            <!-- The address is in JavaScript, so without it the form can't send. Say so. -->
+            <noscript>
+              <p class="form-status">This form needs JavaScript to send. Please turn JavaScript on and reload the page.</p>
+            </noscript>
+
+            <input type="hidden" name="_subject" value="New contact message (website)">
+
+            <!-- HONEYPOT: hidden trap for spam bots (see css/components.css, .form-hp) -->
+            <div class="form-hp" aria-hidden="true">
+              <label for="contact-gotcha">Leave this field empty</label>
+              <input id="contact-gotcha" type="text" name="_gotcha" tabindex="-1" autocomplete="off">
+            </div>
+
+            <!-- "Please fix N things" box (filled by js/contact.js) -->
+            <p class="form-summary" id="contact-summary" role="alert"></p>
+
+            <div class="field">
+              <label for="c-name">Your name</label>
+              <input id="c-name" name="name" type="text" autocomplete="name"
+                     required maxlength="80" aria-describedby="c-name-error">
+              <p class="field__error" id="c-name-error"></p>
+            </div>
+
+            <div class="field">
+              <label for="c-email">Email</label>
+              <!-- A field named "email" becomes the Reply-To of Formspree's email,
+                   so pressing Reply in your inbox answers the visitor directly. -->
+              <input id="c-email" name="email" type="email" autocomplete="email"
+                     required maxlength="120" aria-describedby="c-email-hint c-email-error">
+              <p class="field__hint" id="c-email-hint">We'll reply to this address.</p>
+              <p class="field__error" id="c-email-error"></p>
+            </div>
+
+            <div class="field">
+              <label for="c-message">Message</label>
+              <textarea id="c-message" name="message" rows="6" required minlength="10" maxlength="2000"
+                        aria-describedby="c-message-error"></textarea>
+              <p class="field__error" id="c-message-error"></p>
+            </div>
+
+            <button class="btn btn--primary form__submit" type="submit">Send message</button>
+            <!-- Send errors appear here, filled by js/forms.js -->
+            <p class="form-status" role="alert"></p>
+          </form>
+
+          <!-- Shown after a successful send (js/contact.js) -->
+          <div class="form-success" id="contact-success" tabindex="-1" hidden>
+            <span class="form-success__icon" aria-hidden="true">✓</span>
+            <h3>Message sent!</h3>
+            <p>Thank you, <span id="contact-success-name"></span>. We'll reply to
+              <strong id="contact-success-email"></strong> soon.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. CLOSING CALL TO ACTION (shared component) -->
+    <section class="section" aria-labelledby="cta-title">
+      <div class="container">
+        <div class="cta-band" data-scroll>
+          <h2 id="cta-title">Not sure where to start?</h2>
+          <p>Don't know how to advertise yourself? Ask us, we will guide you.</p>
+          <a class="btn btn--primary" href="consultation.html">Book a free consultation</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Filled in by js/layout.js -->
+  <footer class="site-footer" id="site-footer"></footer>
+</body>
+</html>

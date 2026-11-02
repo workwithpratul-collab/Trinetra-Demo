@@ -1,0 +1,155 @@
+/* =========================================================
+   Trinetra Creations: Home sections (Day 3)
+   Everything below the hero on the Home page.
+   Loaded only by index.html, after style.css and components.css.
+   ========================================================= */
+
+/* ---------- 1. Logo strip (pure CSS endless loop) ----------
+   The list of names is written TWICE in a row. We slide the whole row
+   left by 50% (= exactly one copy), then the animation restarts. At that
+   moment copy 2 sits where copy 1 began, so the loop looks seamless. */
+.logo-strip {
+  padding-block: var(--space-12);
+  border-block: 1px solid var(--color-border);
+}
+
+.logo-strip__label {
+  margin-bottom: var(--space-6);
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  max-width: none;
+}
+
+/* The window we look through. mask-image fades both edges to transparent. */
+.logo-strip__viewport {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+
+/* The moving row. width: max-content = as wide as all the names together. */
+.logo-strip__track {
+  display: flex;
+  width: max-content;
+  animation: logo-scroll 40s linear infinite;
+}
+/* Hovering anywhere on the strip pauses it */
+.logo-strip__viewport:hover .logo-strip__track { animation-play-state: paused; }
+
+.logo-strip__list {
+  display: flex;
+  flex-shrink: 0;
+}
+.logo-strip__list li {
+  padding-inline: var(--space-8);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--color-text-muted);
+}
+
+@keyframes logo-scroll {
+  to { transform: translateX(-50%); }
+}
+
+/* Reduced motion: no sliding. Show one copy, wrapped and centred. */
+@media (prefers-reduced-motion: reduce) {
+  .logo-strip__viewport { -webkit-mask-image: none; mask-image: none; }
+  .logo-strip__track {
+    animation: none;
+    width: 100%;                 /* fit the screen instead of max-content */
+  }
+  /* flex-shrink: 1 undoes the "never shrink" rule above, so the names can wrap */
+  /* Day 13: flex-grow: 1 = the list fills the whole row, so "justify-content: center"
+     can centre the names. Without it, on wide screens the list was only as wide as
+     the names and sat at the far left. */
+  .logo-strip__list { flex-grow: 1; flex-shrink: 1; flex-wrap: wrap; justify-content: center; row-gap: var(--space-3); }
+  .logo-strip__list li { padding-inline: var(--space-3); font-size: var(--text-lg); }  /* smaller, so names pair up */
+  .logo-strip__list[aria-hidden="true"] { display: none; }
+}
+
+/* ---------- 2. Services ---------- */
+.services-grid {
+  display: grid;
+  gap: var(--space-4);
+}
+@media (min-width: 640px)  { .services-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .services-grid { grid-template-columns: repeat(4, 1fr); gap: var(--space-6); } }
+
+/* Big gradient number, e.g. "01" */
+.service-card__num {
+  display: block;
+  margin-bottom: var(--space-6);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+}
+.service-card h3 {
+  margin-bottom: var(--space-3);
+  font-size: 1.375rem;
+}
+.service-card p { color: var(--color-text-muted); }
+
+/* The gradient line: a 3px bar along the bottom, squashed to 0 width.
+   On hover (or keyboard focus) it grows to full width from the left. */
+.service-card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--gradient-brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 500ms var(--ease-out);
+}
+.service-card:hover,
+.service-card:focus-visible {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+.service-card:hover::after,
+.service-card:focus-visible::after { transform: scaleX(1); }
+
+/* ---------- 3. Featured work ----------
+   The grid and card styles moved to css/components.css on Day 4,
+   because the Work page uses the same cards. */
+.work-more { margin-top: var(--space-12); }
+
+/* ---------- 4. Stats ---------- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);   /* 2 x 2 on phones */
+  gap: var(--space-8) var(--space-4);
+  text-align: center;
+}
+@media (min-width: 768px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+
+/* inline-block: the gradient fits the NUMBER's width, so all three
+   brand colours show (with "block" it would stretch across the column). */
+.stat__num {
+  display: inline-block;
+  padding-bottom: 0.08em;                  /* stops background-clip cutting off the base of the digits */
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;      /* every digit the same width = no jiggling while counting */
+}
+.stat__label {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.stats-note {
+  margin: var(--space-8) auto 0;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* ---------- 5. Closing call-to-action band ----------
+   Moved to css/components.css on Day 4 (every page ends with one). */

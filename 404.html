@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- 404 PAGE (Day 14). GitHub Pages shows this file automatically whenever someone
+       opens an address that doesn't exist (an old link, a typo like servces.html).
+       "404" is the web's code for "not found". The name 404.html must stay exactly this.
+       KNOWN LIMIT: links and styles here are relative (like every page). If the missing
+       address is inside a folder that doesn't exist (e.g. /old/page.html), the browser
+       looks for css/ inside /old/ and the page shows unstyled. Top-level typos (the
+       common case) look right. -->
+
+  <!-- Same page fade and #link fix as every page (see index.html for the why) -->
+  <style>
+    @view-transition { navigation: auto; }
+    @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+  </style>
+  <script>
+    if (location.hash) {
+      document.documentElement.style.scrollBehavior = "auto";
+      addEventListener("load", function () {
+        setTimeout(function () { document.documentElement.style.scrollBehavior = ""; }, 2000);
+      });
+    }
+  </script>
+
+  <!-- SEO: a clear title, and "noindex" = search engines must NOT list this page.
+       No canonical and not in sitemap.xml: it isn't a real page. -->
+  <title>Page not found | Trinetra Creations</title>
+  <meta name="description" content="This page could not be found. Visit the Trinetra Creations home page, see our work, or book a free branding consultation.">
+  <!-- PREVIEW MODE (Day 15): keeps this private preview out of search engines.
+       Preview site: not for search engines. -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0b0a0f">
+
+  <!-- Favicons: same set as every page -->
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Fonts: same request as every page (the browser has them cached already) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Raleway:wght@500&display=swap">
+
+  <!-- Shared styles only: .page-intro, .btn and the .case-missing "not found" look
+       all live in style.css / components.css, so this page needs no CSS file of its own -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+
+  <!-- Header/footer, then the same GSAP motion as every page (decision: GSAP on every page) -->
+  <script src="js/layout.js" defer blocking="render"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"
+          integrity="sha384-XmJ9SoHtVOHoQUcKvFAzVXwdkKo1Ie3bhmSoIAkcdsHGaIrVJIkmozyq0FJeb/Ly"
+          crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"
+          integrity="sha384-wl5TeDVvOWt30Pbf8aSo2ZrzsOjddu3avOBvHe+p+OhJt9gP6w9YXmDkN5DK2/dF"
+          crossorigin="anonymous" defer></script>
+  <script src="js/motion-gsap.js" defer></script>
+  <script src="js/motion.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Filled in by js/layout.js -->
+  <header class="site-header" id="site-header">
+    <noscript>
+      <nav class="nav container" aria-label="Main">
+        <a href="index.html">Trinetra Creations</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </noscript>
+  </header>
+
+  <main id="main">
+    <!-- The one h1. Same look as "We couldn't find that project." on the case-study page -->
+    <section class="page-intro case-missing" aria-labelledby="page-title">
+      <div class="container">
+        <span class="eyebrow">Error 404</span>
+        <h1 id="page-title">This page is out of <span class="text-gradient">sight.</span></h1>
+        <p class="page-intro__lead">
+          Even three eyes couldn't find it. The link may be old or mistyped.
+          Here are some good places to go instead:
+        </p>
+        <!-- Link text says where each link goes, so it makes sense read on its own -->
+        <p>
+          <a href="work.html">See our work</a> ·
+          <a href="services.html">Our services</a> ·
+          <a href="journal.html">Read the journal</a> ·
+          <a href="contact.html">Contact us</a>
+        </p>
+        <a class="btn btn--primary case-missing__btn" href="index.html">&larr; Back to the home page</a>
+      </div>
+    </section>
+
+    <!-- Same closing call to action as every page -->
+    <section class="section" aria-labelledby="cta-title">
+      <div class="container">
+        <div class="cta-band" data-scroll>
+          <h2 id="cta-title">Looking for help with your brand?</h2>
+          <p>Don't know how to advertise yourself? Ask us, we will guide you.</p>
+          <a class="btn btn--primary" href="consultation.html">Book a free consultation</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Filled in by js/layout.js -->
+  <footer class="site-footer" id="site-footer"></footer>
+</body>
+</html>

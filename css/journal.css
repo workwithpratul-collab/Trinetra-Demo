@@ -1,0 +1,94 @@
+/* =========================================================
+   Trinetra Creations: Journal styles (Day 11)
+   Used by journal.html (the list) and journal-post.html (one article).
+   The cards, page intro, prev/next and "not found" come from
+   css/components.css; this file only adds what's special to the Journal.
+   ========================================================= */
+
+/* ---------- 1. The list (journal.html) ---------- */
+/* Two columns on wider screens (4 articles = 2 neat rows), not the Work page's 3 */
+@media (min-width: 768px) {
+  .post-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Wider, shorter art than a project (16:9 instead of 4:3) */
+.post-card .work-card__media { aspect-ratio: 16 / 9; }
+
+.post-card__intro {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+}
+.post-card__date {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* Fallback messages (JavaScript off or a script failed) */
+.journal-fallback { color: var(--color-text-muted); }
+.journal-fallback a,
+.journal-fallback-intro a { color: var(--color-saffron); text-decoration: underline; }
+
+/* ---------- 2. One article (journal-post.html) ---------- */
+/* A narrow column: about 65–75 characters per line is the most comfortable to read */
+.post-narrow { max-width: calc(44rem + 2 * var(--gutter)); }
+
+/* Article titles are longer than page titles, so a smaller size than the hero */
+.post-hero h1 {
+  max-width: 22ch;
+  font-size: clamp(2.25rem, 1.5rem + 3.5vw, 4rem);
+}
+
+/* display: block puts the link on its own line. (Day 11 fix: as inline-block
+   it sat beside the category label, which is inline-block too.)
+   width: fit-content = the clickable area is only as wide as the text. */
+/* Day 13: bigger tap area, same position (same trick as .case-back in case.css):
+   12px padding above and below, cancelled by the margins. 22px → 46px tall. */
+.post-back {
+  display: block;
+  width: fit-content;
+  padding-block: var(--space-3);
+  margin-top: calc(var(--space-3) * -1);
+  margin-bottom: calc(var(--space-6) - var(--space-3));
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  transition: color var(--duration);
+}
+.post-back:hover,
+.post-back:focus-visible { color: var(--color-text); }
+
+/* Date · reading time */
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.post-hero__badge { margin-top: var(--space-4); }
+
+/* The article text */
+.post-body {
+  padding-bottom: var(--space-12);
+  font-size: var(--text-lg);
+  line-height: 1.75;                      /* a little more space between lines for long reading */
+}
+.post-body p + p { margin-top: var(--space-6); }
+.post-body h2 {
+  margin-top: var(--space-12);
+  margin-bottom: var(--space-4);
+  font-size: var(--text-xl);
+}
+
+/* Previous / next cards under the article, a little wider than the text column */
+.post-pager {
+  padding-top: var(--space-8);
+  max-width: calc(56rem + 2 * var(--gutter));
+}
+/* Article titles are long and wrap onto 2–3 lines: tighter line spacing than
+   the body's 1.6 keeps each title reading as one block (Day 11 fix). */
+.post-pager .case-pager__title { line-height: 1.25; }
+/* Both cards are as tall as the taller one; align-content: start keeps a
+   shorter title at the top instead of spreading the extra space between the lines. */
+.post-pager .case-pager__link { align-content: start; }

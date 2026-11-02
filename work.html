@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- PAGE FADE opt-in (Day 12). It MUST be written here in the page, not only in
+       css/style.css: Chrome decides very early whether to fade, and on fast loads it
+       decided before style.css was applied (tested: 3 fades out of 20 that way,
+       20 out of 20 like this). The fade's timing and look live in css/style.css. -->
+  <style>
+    @view-transition { navigation: auto; }
+    @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+  </style>
+  <!-- #LINK FIX: when the address has a #target (e.g. services.html#ads), switch
+       smooth scrolling off BEFORE the page is read, so the browser jumps there
+       instantly. A smooth glide could overshoot the target on first visits.
+       Smooth scrolling comes back 2 seconds after the page has loaded. -->
+  <script>
+    if (location.hash) {
+      document.documentElement.style.scrollBehavior = "auto";
+      addEventListener("load", function () {
+        setTimeout(function () { document.documentElement.style.scrollBehavior = ""; }, 2000);
+      });
+    }
+  </script>
+
+  <!-- SEO basics: a unique title and description for this page -->
+  <title>Our Work: Branding Case Studies | Trinetra Creations</title>
+  <meta name="description" content="Selected branding projects by Trinetra Creations: logos and identities, ad campaigns, social media and packaging, each with its challenge and results.">
+  <!-- PREVIEW MODE (Day 15): keeps this private preview out of search engines.
+       Preview site: not for search engines. -->
+  <meta name="robots" content="noindex, nofollow">
+  <!-- CANONICAL = "this is the one official address of this page". Search engines list
+       THIS address even when people arrive by another one (with ?utm=…, #links, or "/index.html"). -->
+  <link rel="canonical" href="https://www.example-trinetra.com/work.html">
+  <!-- theme-color: phones tint the browser's address bar with our near-black background -->
+  <meta name="theme-color" content="#0b0a0f">
+
+  <!-- SHARE PREVIEWS. Open Graph (og:) is read by WhatsApp, Facebook and LinkedIn; twitter:
+       by X. No image on purpose (decision: no share image), so they show a text card.
+       Same title + description as above, so every preview says the same thing. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Trinetra Creations">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:url" content="https://www.example-trinetra.com/work.html">
+  <meta property="og:title" content="Our Work: Branding Case Studies | Trinetra Creations">
+  <meta property="og:description" content="Selected branding projects by Trinetra Creations: logos and identities, ad campaigns, social media and packaging, each with its challenge and results.">
+  <!-- "summary" = the small text card, which works without an image -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Our Work: Branding Case Studies | Trinetra Creations">
+  <meta name="twitter:description" content="Selected branding projects by Trinetra Creations: logos and identities, ad campaigns, social media and packaging, each with its challenge and results.">
+
+  <!-- Favicons: same set as every page (see index.html for why the .ico has sizes="32x32") -->
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Raleway:wght@500&display=swap">
+
+  <!-- Shared design system, shared components, then this page's own styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/work.css">
+
+  <!-- Deferred scripts run in this order:
+       data → card template → this page's script → scroll reveal (last, so it sees the cards) -->
+  <!-- blocking="render" (Day 12): "don't paint the page until this has run",
+       so the header and footer are already there in the very first frame. -->
+  <script src="js/layout.js" defer blocking="render"></script>
+  <script src="js/projects.js" defer></script>
+  <script src="js/helpers.js" defer></script>        <!-- escapeHTML + counters (Day 5) -->
+  <script src="js/project-card.js" defer></script>
+  <script src="js/work.js" defer></script>
+  <!-- GSAP + ScrollTrigger (Day 12): the animation library, from the jsDelivr CDN.
+       PINNED to 3.15.0 (released 13 April 2026), never "@latest": an update could change
+       how the animations behave without us noticing, and brand-new releases are the
+       most likely to have bugs. integrity = fingerprint of the exact file we tested;
+       if the CDN sends anything else, the browser refuses it and js/motion.js's plain
+       CSS fade-in is used instead. -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"
+          integrity="sha384-XmJ9SoHtVOHoQUcKvFAzVXwdkKo1Ie3bhmSoIAkcdsHGaIrVJIkmozyq0FJeb/Ly"
+          crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"
+          integrity="sha384-wl5TeDVvOWt30Pbf8aSo2ZrzsOjddu3avOBvHe+p+OhJt9gP6w9YXmDkN5DK2/dF"
+          crossorigin="anonymous" defer></script>
+  <script src="js/motion-gsap.js" defer></script>    <!-- our GSAP motion (Day 12) -->
+  <script src="js/motion.js" defer></script>         <!-- CSS fallback; steps aside when GSAP runs -->
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Filled in by js/layout.js -->
+  <header class="site-header" id="site-header">
+    <noscript>
+      <nav class="nav container" aria-label="Main">
+        <a href="index.html">Trinetra Creations</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </noscript>
+  </header>
+
+  <main id="main">
+    <!-- PAGE INTRO: the one h1 on this page -->
+    <section class="page-intro" aria-labelledby="page-title">
+      <div class="container">
+        <span class="eyebrow">Our work</span>
+        <h1 id="page-title">Work that gets <span class="text-gradient">noticed.</span></h1>
+        <p class="page-intro__lead">
+          Logos, campaigns, social media and packaging for businesses that
+          wanted to stand out. Pick a category to narrow it down.
+        </p>
+      </div>
+    </section>
+
+    <!-- PROJECTS: filter bar + grid -->
+    <section class="section work-projects" aria-labelledby="projects-title">
+      <div class="container">
+        <h2 id="projects-title" class="visually-hidden">All projects</h2>
+
+        <!-- Starts hidden: the buttons need JavaScript to work, so js/work.js
+             only shows them once it is running. -->
+        <div class="filters" id="filters" hidden>
+          <!-- role="group" + aria-label: screen readers announce these buttons as one set -->
+          <div class="filters__buttons" role="group" aria-label="Filter projects by category">
+            <!-- data-filter must match the "category" text in js/projects.js exactly -->
+            <button class="filter-btn" type="button" data-filter="all" aria-pressed="true">All</button>
+            <button class="filter-btn" type="button" data-filter="Logo &amp; Identity" aria-pressed="false">Logo &amp; Identity</button>
+            <button class="filter-btn" type="button" data-filter="Ads &amp; Campaigns" aria-pressed="false">Ads &amp; Campaigns</button>
+            <button class="filter-btn" type="button" data-filter="Social Media" aria-pressed="false">Social Media</button>
+            <button class="filter-btn" type="button" data-filter="Packaging" aria-pressed="false">Packaging</button>
+          </div>
+          <!-- aria-live="polite": when this text changes, screen readers read it
+               out once they finish what they're saying. -->
+          <p class="filters__status" id="filter-status" aria-live="polite"></p>
+        </div>
+
+        <!-- Filled by js/work.js with one card per project -->
+        <ul class="work-grid" id="project-grid" role="list" data-scroll></ul>
+
+        <!-- Shows if JavaScript is off OR failed to load. work.js deletes it on success. -->
+        <p class="work-fallback" id="work-fallback">
+          Our projects need JavaScript to display. Please refresh the page, or
+          <a href="contact.html">contact us</a> and we'll send examples.
+        </p>
+      </div>
+    </section>
+
+    <!-- CLOSING CALL TO ACTION (same component as the Home page) -->
+    <section class="section" aria-labelledby="cta-title">
+      <div class="container">
+        <div class="cta-band" data-scroll>
+          <h2 id="cta-title">Want your brand here next?</h2>
+          <p>Don't know how to advertise yourself? Ask us, we will guide you.</p>
+          <a class="btn btn--primary" href="consultation.html">Book a free consultation</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Filled in by js/layout.js -->
+  <footer class="site-footer" id="site-footer"></footer>
+</body>
+</html>

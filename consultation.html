@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- PAGE FADE opt-in (Day 12). It MUST be written here in the page, not only in
+       css/style.css: Chrome decides very early whether to fade, and on fast loads it
+       decided before style.css was applied (tested: 3 fades out of 20 that way,
+       20 out of 20 like this). The fade's timing and look live in css/style.css. -->
+  <style>
+    @view-transition { navigation: auto; }
+    @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+  </style>
+  <!-- #LINK FIX: when the address has a #target (e.g. services.html#ads), switch
+       smooth scrolling off BEFORE the page is read, so the browser jumps there
+       instantly. A smooth glide could overshoot the target on first visits.
+       Smooth scrolling comes back 2 seconds after the page has loaded. -->
+  <script>
+    if (location.hash) {
+      document.documentElement.style.scrollBehavior = "auto";
+      addEventListener("load", function () {
+        setTimeout(function () { document.documentElement.style.scrollBehavior = ""; }, 2000);
+      });
+    }
+  </script>
+
+  <!-- SEO basics: a unique title and description for this page -->
+  <title>Book a Free Branding Consultation | Trinetra Creations</title>
+  <meta name="description" content="Don't know how to advertise yourself? Book a free call with Trinetra Creations for honest advice on your logo, ads, social media or packaging.">
+  <!-- PREVIEW MODE (Day 15): keeps this private preview out of search engines.
+       Preview site: not for search engines. -->
+  <meta name="robots" content="noindex, nofollow">
+  <!-- CANONICAL = "this is the one official address of this page". Search engines list
+       THIS address even when people arrive by another one (with ?utm=…, #links, or "/index.html"). -->
+  <link rel="canonical" href="https://www.example-trinetra.com/consultation.html">
+  <!-- theme-color: phones tint the browser's address bar with our near-black background -->
+  <meta name="theme-color" content="#0b0a0f">
+
+  <!-- SHARE PREVIEWS. Open Graph (og:) is read by WhatsApp, Facebook and LinkedIn; twitter:
+       by X. No image on purpose (decision: no share image), so they show a text card.
+       Same title + description as above, so every preview says the same thing. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Trinetra Creations">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:url" content="https://www.example-trinetra.com/consultation.html">
+  <meta property="og:title" content="Book a Free Branding Consultation | Trinetra Creations">
+  <meta property="og:description" content="Don't know how to advertise yourself? Book a free call with Trinetra Creations for honest advice on your logo, ads, social media or packaging.">
+  <!-- "summary" = the small text card, which works without an image -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Book a Free Branding Consultation | Trinetra Creations">
+  <meta name="twitter:description" content="Don't know how to advertise yourself? Book a free call with Trinetra Creations for honest advice on your logo, ads, social media or packaging.">
+
+  <!-- Favicons: same set as every page (see index.html for why the .ico has sizes="32x32") -->
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Fonts (Raleway 500 for the wordmark, as on About and Services) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Raleway:wght@500&display=swap">
+
+  <!-- Shared design system, shared components, then this page's own styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/consultation.css">
+
+  <!-- nav/footer → form checking → scroll reveal -->
+  <!-- blocking="render" (Day 12): "don't paint the page until this has run",
+       so the header and footer are already there in the very first frame. -->
+  <script src="js/layout.js" defer blocking="render"></script>
+  <script src="js/forms.js" defer></script>          <!-- shared sendForm() (Day 9) -->
+  <script src="js/consultation.js" defer></script>
+  <!-- GSAP + ScrollTrigger (Day 12): the animation library, from the jsDelivr CDN.
+       PINNED to 3.15.0 (released 13 April 2026), never "@latest": an update could change
+       how the animations behave without us noticing, and brand-new releases are the
+       most likely to have bugs. integrity = fingerprint of the exact file we tested;
+       if the CDN sends anything else, the browser refuses it and js/motion.js's plain
+       CSS fade-in is used instead. -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"
+          integrity="sha384-XmJ9SoHtVOHoQUcKvFAzVXwdkKo1Ie3bhmSoIAkcdsHGaIrVJIkmozyq0FJeb/Ly"
+          crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"
+          integrity="sha384-wl5TeDVvOWt30Pbf8aSo2ZrzsOjddu3avOBvHe+p+OhJt9gP6w9YXmDkN5DK2/dF"
+          crossorigin="anonymous" defer></script>
+  <script src="js/motion-gsap.js" defer></script>    <!-- our GSAP motion (Day 12) -->
+  <script src="js/motion.js" defer></script>         <!-- CSS fallback; steps aside when GSAP runs -->
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Filled in by js/layout.js -->
+  <header class="site-header" id="site-header">
+    <noscript>
+      <nav class="nav container" aria-label="Main">
+        <a href="index.html">Trinetra Creations</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </noscript>
+  </header>
+
+  <main id="main">
+    <!-- 1. PAGE INTRO: the one h1 on this page -->
+    <section class="page-intro consult-intro" aria-labelledby="page-title">
+      <div class="container">
+        <span class="eyebrow">Free consultation</span>
+        <h1 id="page-title">
+          Don't know how to advertise yourself?
+          <span class="text-gradient">Ask us. We will guide you.</span>
+        </h1>
+        <p class="page-intro__lead">
+          Book a free, no-pressure call. Tell us about your business and we'll
+          tell you honestly what will help it get noticed, even if that means
+          you don't need us.
+        </p>
+        <!-- A shortcut straight to the form (useful on phones, where it's far down) -->
+        <a class="btn btn--primary consult-intro__btn" href="#form-title">Fill in the form</a>
+      </div>
+    </section>
+
+    <!-- 2. WHAT HAPPENS IN THE FREE CALL: 3 numbered steps -->
+    <section class="section consult-steps" aria-labelledby="steps-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">How it works</span>
+          <h2 id="steps-title">What happens in the free call</h2>
+        </div>
+
+        <!-- <ol> because the order matters. The numbers come from a CSS counter. -->
+        <ol class="steps" role="list" data-scroll>
+          <li class="card step">
+            <h3>You tell us about your business</h3>
+            <p>Fill in the short form below. We call you back to hear what you sell, who buys it and what's not working.</p>
+          </li>
+          <li class="card step">
+            <h3>We look at your brand</h3>
+            <p>We check your signboard, social pages, ads or packaging, and compare them with what your competitors do.</p>
+          </li>
+          <li class="card step">
+            <h3>You get a clear plan</h3>
+            <p>Honest advice on what to fix first and roughly what it costs. Use it with us or on your own; it's yours either way.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 3. THE FORM -->
+    <section class="section consult-form-section" aria-labelledby="form-title">
+      <div class="container">
+        <!-- scroll-margin-top (in the CSS) keeps the sticky header off this heading
+             when the "Fill in the form" button jumps here -->
+        <div class="section-head">
+          <span class="eyebrow">Book your call</span>
+          <h2 id="form-title">Tell us a little about you</h2>
+          <p>Fields are required unless marked <em>optional</em>. It takes about two minutes.</p>
+        </div>
+
+        <div class="card form-card">
+          <!-- No action="" here: the Formspree address lives in ONE place,
+               FORMSPREE_URL in js/forms.js, and the script sends the form.
+               The browser's own checks (required, type="email") are the BACKUP:
+               js/consultation.js adds "novalidate" and shows friendlier messages instead. -->
+          <form class="form" id="consult-form" method="post">
+
+            <!-- The address is in JavaScript, so without it the form can't send. Say so. -->
+            <noscript>
+              <p class="form-status">This form needs JavaScript to send. Please turn JavaScript on and reload the page.</p>
+            </noscript>
+
+            <!-- Email subject when JavaScript is off (the script sets a more detailed one) -->
+            <input type="hidden" name="_subject" value="New consultation request (website)">
+
+            <!-- HONEYPOT: a trap for spam bots. Hidden off-screen by CSS (.form-hp).
+                 People never see it, so they leave it empty. Bots fill in every field.
+                 Formspree throws away any submission where _gotcha has a value. -->
+            <div class="form-hp" aria-hidden="true">
+              <label for="consult-gotcha">Leave this field empty</label>
+              <input id="consult-gotcha" type="text" name="_gotcha" tabindex="-1" autocomplete="off">
+            </div>
+
+            <!-- Shown only when the visitor came from "Build your order" on services.html
+                 (js/consultation.js fills it). role="status" = read out politely. -->
+            <p class="form-note" id="order-note" role="status" hidden></p>
+
+            <!-- Shown by the script when you press Send with mistakes.
+                 role="alert" = screen readers read it out immediately. -->
+            <p class="form-summary" id="form-summary" role="alert"></p>
+
+            <!-- Each field: <label for="x"> + <input id="x">. The matching for/id is the
+                 "link": clicking the label focuses the input, and screen readers read
+                 the label when the input is focused.
+                 aria-describedby="x-error" links the error message below it. -->
+            <div class="form-grid">
+              <div class="field">
+                <label for="name">Your name</label>
+                <input id="name" name="name" type="text" autocomplete="name"
+                       required maxlength="80" aria-describedby="name-error">
+                <p class="field__error" id="name-error"></p>
+              </div>
+
+              <div class="field">
+                <label for="phone">Phone or WhatsApp number</label>
+                <!-- type="tel" = number keypad on phones. pattern is the no-JS backup:
+                     10 to 16 characters of digits, spaces, +, - or brackets.
+                     GOTCHA: browsers read pattern in a strict mode where ( ) and - inside [ ]
+                     MUST have a backslash. Without them the pattern is silently ignored. -->
+                <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel"
+                       required pattern="[0-9+\s\-\(\)]{10,16}" maxlength="16"
+                       placeholder="98765 43210"
+                       aria-describedby="phone-hint phone-error">
+                <p class="field__hint" id="phone-hint">We'll call you on this number.</p>
+                <p class="field__error" id="phone-error"></p>
+              </div>
+
+              <div class="field">
+                <label for="email">Email <span class="field__optional">(optional)</span></label>
+                <!-- type="email" = keyboard with @ on phones, plus a built-in format check -->
+                <input id="email" name="email" type="email" autocomplete="email"
+                       maxlength="120" aria-describedby="email-error">
+                <p class="field__error" id="email-error"></p>
+              </div>
+
+              <div class="field">
+                <label for="business">Business name <span class="field__optional">(optional)</span></label>
+                <input id="business" name="business" type="text" autocomplete="organization" maxlength="100">
+              </div>
+
+              <div class="field">
+                <label for="type">Type of business</label>
+                <!-- value="" on the first option + required = "you must pick a real option" -->
+                <select id="type" name="type" required aria-describedby="type-error">
+                  <option value="">Choose one…</option>
+                  <option>Shop or retail</option>
+                  <option>Restaurant, café or sweets</option>
+                  <option>Clinic or health</option>
+                  <option>Salon or beauty</option>
+                  <option>School or coaching</option>
+                  <option>Startup or online business</option>
+                  <option>Manufacturing or FMCG</option>
+                  <option>Other</option>
+                </select>
+                <p class="field__error" id="type-error"></p>
+              </div>
+
+              <div class="field">
+                <label for="budget">Budget range <span class="field__optional">(optional)</span></label>
+                <!-- Day 14: written as "INR", not the ₹ sign. Our Inter font keeps ₹ in a
+                     separate "extended" file, so this one symbol cost an extra 83 KB download. -->
+                <select id="budget" name="budget">
+                  <option value="">Not sure yet</option>
+                  <option>Under INR 10,000</option>
+                  <option>INR 10,000 – 25,000</option>
+                  <option>INR 25,000 – 50,000</option>
+                  <option>INR 50,000 – 1,00,000</option>
+                  <option>Above INR 1,00,000</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- A group of checkboxes: <fieldset> wraps them, <legend> is the group's label.
+                 A screen reader says "What do you need help with? group" before each box. -->
+            <fieldset class="field checks" aria-describedby="help-error">
+              <legend>What do you need help with? <span class="field__optional">(tick all that apply)</span></legend>
+              <div class="checks__grid">
+                <!-- Same name="help" on every box = they're sent together as a list -->
+                <label class="check"><input type="checkbox" name="help" value="Logo &amp; identity"> Logo &amp; identity</label>
+                <label class="check"><input type="checkbox" name="help" value="Ads &amp; campaigns"> Ads &amp; campaigns</label>
+                <label class="check"><input type="checkbox" name="help" value="Social media"> Social media</label>
+                <label class="check"><input type="checkbox" name="help" value="Packaging"> Packaging</label>
+                <label class="check"><input type="checkbox" name="help" value="Not sure yet"> Not sure yet</label>
+              </div>
+              <p class="field__error" id="help-error"></p>
+            </fieldset>
+
+            <div class="field">
+              <label for="message">Anything else we should know? <span class="field__optional">(optional)</span></label>
+              <textarea id="message" name="message" rows="5" maxlength="1000"
+                        placeholder="For example: we're opening a second branch in March and need new signboards."></textarea>
+            </div>
+
+            <button class="btn btn--primary form__submit" type="submit">Book my free call</button>
+            <!-- Send errors appear here ("Sorry, your message didn't send…"), filled by js/forms.js -->
+            <p class="form-status" role="alert"></p>
+            <p class="form__privacy">We only use your details to contact you about this request.</p>
+          </form>
+
+          <!-- THANK-YOU MESSAGE: hidden until the form passes every check.
+               tabindex="-1" lets the script move focus here, so screen readers
+               announce it (it can't be reached with Tab, which is what we want). -->
+          <div class="form-success" id="form-success" tabindex="-1" hidden>
+            <span class="form-success__icon" aria-hidden="true">✓</span>
+            <h3>Thank you, <span id="success-name">friend</span>!</h3>
+            <p>
+              We've got your details and will call you on
+              <strong id="success-phone"></strong> soon to set up your free consultation.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. FAQ: <details> = a built-in open/close box; <summary> = its clickable title.
+         No JavaScript needed, and Enter/Space open it from the keyboard. -->
+    <section class="section consult-faq" aria-labelledby="faq-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Questions</span>
+          <h2 id="faq-title">Before you book</h2>
+        </div>
+
+        <div class="faq" data-scroll>
+          <details class="faq__item">
+            <summary>Is the consultation really free?</summary>
+            <p>Yes. There's no fee and no obligation to hire us afterwards. We'd rather give you good advice today and earn your trust.</p>
+          </details>
+          <details class="faq__item">
+            <summary>How long is the call?</summary>
+            <p>Usually under half an hour. If we need to see your shop, packaging or pages, we'll ask you to share photos or links first.</p>
+          </details>
+          <details class="faq__item">
+            <summary>I don't know what I need. Should I still book?</summary>
+            <p>Absolutely, that's what the call is for. Tick "Not sure yet" in the form and we'll work it out together.</p>
+          </details>
+          <details class="faq__item">
+            <summary>What happens after the call?</summary>
+            <p>You get a short summary of what we suggest. If you'd like us to do the work, we'll send a clear quote. If not, no follow-up pressure.</p>
+          </details>
+          <details class="faq__item">
+            <summary>What do you do with my details?</summary>
+            <p>We use them only to contact you about your request. We never sell or share them.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Filled in by js/layout.js -->
+  <footer class="site-footer" id="site-footer"></footer>
+</body>
+</html>

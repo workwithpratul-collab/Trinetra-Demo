@@ -1,0 +1,312 @@
+/* =========================================================
+   Trinetra Creations: case-study page styles (Day 5)
+   Loaded only by case-study.html, after style.css and components.css.
+   Page intro, eyebrow, badge, scroll reveal and CTA band come from
+   components.css; this file styles the parts unique to a case study.
+   ========================================================= */
+
+/* ---------- 1. Hero: colour art behind the title ----------
+   --from / --to are the project's two colours, set inline by js/case.js.
+   isolation: isolate keeps the art's negative z-index INSIDE this section. */
+.case-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  /* Day 6: bottom padding cut down. Hero padding + the next section's
+     padding added up to an empty 8rem gap on phones. */
+  padding-block: var(--space-12) var(--space-8);
+}
+@media (min-width: 768px) {
+  .case-hero { padding-block: var(--space-16) var(--space-16); }
+}
+
+/* The "art" is three layers, bottom to top:
+   1. The project gradient (this element's own background)
+   2. An optional photo (<img class="case-hero__photo">, Day 6), which covers the gradient
+   3. A dark veil (::after) on top of both, so white text is always readable
+   Day 6: the veil is darker at the TOP than before (0.4 instead of 0.2).
+   On light colours like Shree Sweets' saffron, white text on the old 0.2 veil
+   failed the contrast check. 0.4 gives about 4.5:1, the WCAG AA minimum. */
+.case-hero__art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(135deg, var(--from), var(--to));
+}
+.case-hero__art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--color-bg) 0%, rgba(11, 10, 15, 0.6) 45%, rgba(11, 10, 15, 0.4) 100%);
+}
+
+/* The optional project photo fills the whole hero.
+   object-fit: cover = fill the box and crop the edges, never stretch the photo. */
+.case-hero__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Three soft rings: a quiet nod to "Trinetra" (three eyes).
+   Pure decoration, so the HTML marks them aria-hidden. */
+.case-hero__ring {
+  position: absolute;
+  z-index: 1;                             /* above the veil, so the rings stay crisp */
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  animation: ring-float 14s ease-in-out infinite alternate;
+}
+.case-hero__ring--1 { width: 22rem; height: 22rem; top: -6rem;  right: -6rem; }
+.case-hero__ring--2 { width: 14rem; height: 14rem; top: 4rem;   right: 8rem;
+                      background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 70%);
+                      animation-delay: -5s; }
+.case-hero__ring--3 { width: 8rem;  height: 8rem;  top: 1rem;   right: 3rem;
+                      border-width: 2px; animation-delay: -9s; }
+
+/* On phones the rings ran through the headline (Day 6 fix).
+   Hide the biggest one and tuck the other two, smaller, into the top-right corner,
+   where only the short "← All work" line sits. */
+@media (max-width: 767px) {
+  .case-hero__ring--1 { display: none; }
+  .case-hero__ring--2 { width: 9rem; height: 9rem; top: -3.5rem; right: -2.5rem; }
+  .case-hero__ring--3 { width: 5rem; height: 5rem; top: 0.5rem;  right: 1rem; }
+}
+
+/* With a real photo the rings would just add clutter, so hide them */
+.case-hero--photo .case-hero__ring { display: none; }
+
+/* Photos can be busy and bright in any spot, so they get a stronger veil:
+   an extra layer that is darkest on the LEFT, where the text sits. */
+.case-hero--photo .case-hero__art::after {
+  background:
+    linear-gradient(to right, rgba(11, 10, 15, 0.6) 0%, rgba(11, 10, 15, 0.2) 75%),
+    linear-gradient(to top, var(--color-bg) 0%, rgba(11, 10, 15, 0.65) 45%, rgba(11, 10, 15, 0.5) 100%);
+}
+
+/* A slow drift: subtle motion, as the design brief asks */
+@keyframes ring-float {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(-1.5rem, 1rem); }
+}
+
+.case-hero__content { position: relative; }
+
+/* "← All work": small link back to the Work page */
+/* display: block + width: fit-content = its own line (block) but only as wide
+   as its text, so the clickable area doesn't stretch across the page.
+   (inline-block put it on the same line as the eyebrow label.) */
+/* Day 13: 12px invisible padding above and below = a 46px tall tap area (was 22px).
+   The negative top margin and the smaller bottom margin cancel that padding,
+   so the link and everything around it stay exactly where they were. */
+.case-back {
+  display: block;
+  width: fit-content;
+  padding-block: var(--space-3);
+  margin-top: calc(var(--space-3) * -1);
+  margin-bottom: calc(var(--space-8) - var(--space-3));
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  transition: color var(--duration);
+}
+.case-back:hover { color: var(--color-text); }
+
+/* Day 6: in the hero, the back link and eyebrow sit on the project's colours,
+   which can be orange or red. Saffron or grey text vanished there,
+   so both use near-white instead. */
+.case-hero .case-back { color: rgba(244, 241, 248, 0.85); }
+.case-hero .case-back:hover { color: var(--color-text); }
+.case-hero .eyebrow { color: var(--color-text); }
+
+/* Each half of the eyebrow ("Kaveri Textiles" · "Ads & Campaigns") refuses to
+   break inside itself, so a long line wraps at the dot, not after "Ads &". */
+.case-eyebrow__part { white-space: nowrap; }
+
+.case-hero h1 {
+  max-width: 16ch;
+  font-size: clamp(2.25rem, 1.4rem + 4.5vw, 4.5rem);  /* a little smaller than Home's hero */
+}
+.case-hero__lead {
+  margin-top: var(--space-6);
+  font-size: var(--text-lg);
+  color: var(--color-text);
+}
+.case-hero .badge { margin-top: var(--space-4); }
+
+/* Client / Year / Services facts */
+.case-facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;          /* Client + Year side by side on phones */
+  gap: var(--space-6);
+  margin-top: var(--space-12);
+  padding-top: var(--space-6);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+.case-facts__services { grid-column: 1 / -1; }   /* services take the full row on phones */
+@media (min-width: 768px) {
+  .case-facts { grid-template-columns: auto auto 1fr; gap: var(--space-12); }
+  .case-facts__services { grid-column: auto; }
+}
+.case-facts dt {
+  margin-bottom: var(--space-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.case-facts dd { margin: 0; font-weight: 500; }
+
+/* Services shown as small pill tags */
+.case-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.case-tags li {
+  padding: 0.2em 0.8em;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  background: rgba(11, 10, 15, 0.35);
+}
+
+/* ---------- 2. Challenge + approach ---------- */
+.case-story {
+  display: grid;
+  gap: var(--space-12);
+}
+@media (min-width: 900px) {
+  .case-story { grid-template-columns: 1fr 1fr; gap: var(--space-16); }
+}
+
+.case-h2 {
+  margin-bottom: var(--space-6);
+  font-size: var(--text-xl);
+}
+.case-text {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+}
+
+/* Numbered steps with gradient numbers.
+   A CSS counter numbers the <li>s for us: counter-reset starts it at 0,
+   counter-increment adds 1 per step, counter() prints it. */
+.case-steps {
+  display: grid;
+  gap: var(--space-6);
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.case-steps li {
+  position: relative;
+  padding-left: var(--space-12);
+  color: var(--color-text-muted);
+  counter-increment: step;
+}
+/* The bold "Research" / "Idea" / "Rollout" label at the start of a step:
+   its own line, in full white, so the three steps are easy to scan */
+.case-steps__label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-weight: 600;
+  color: var(--color-text);
+}
+.case-steps li::before {
+  content: "0" counter(step);
+  position: absolute;
+  left: 0;
+  top: -0.1em;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- 3. Results ---------- */
+/* No top padding: the story section above already gives enough space */
+.section.case-results-section { padding-top: 0; }
+.case-results-section .container {
+  padding-block: var(--space-12);
+  border-block: 1px solid var(--color-border);
+}
+.case-results {
+  display: grid;
+  gap: var(--space-8);
+}
+@media (min-width: 768px) { .case-results { grid-template-columns: repeat(3, 1fr); } }
+
+/* inline-block + padding-bottom: same gradient-number fixes as the Home stats */
+.case-result__num {
+  display: inline-block;
+  padding-bottom: 0.08em;
+  font-family: var(--font-display);
+  font-size: var(--text-hero);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;     /* digits all the same width: no jiggle while counting */
+}
+.case-result__label {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+}
+.case-note {
+  margin-top: var(--space-8);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* ---------- 4. Client quote ---------- */
+.case-quote {
+  max-width: 48rem;
+  margin-inline: auto;
+  text-align: center;
+}
+.case-quote blockquote p {
+  max-width: none;
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  line-height: 1.25;
+}
+/* Big decorative opening quote mark above the text */
+.case-quote blockquote::before {
+  content: "\201C";                       /* the “ character */
+  display: block;
+  font-family: var(--font-display);
+  font-size: 6rem;
+  line-height: 1;                         /* a full line box, so background-clip doesn't cut the mark off */
+  height: 0.55em;                         /* …but only take up about half of it, to sit close to the quote */
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.case-quote figcaption {
+  display: grid;
+  gap: var(--space-1);
+  margin-top: var(--space-8);
+}
+.case-quote figcaption span {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ---------- 5 + 6. Previous / next and "not found" ----------
+   MOVED to css/components.css (section 9) on Day 11, so the Journal
+   article page can share them. The class names are unchanged. */
+.case-fallback a { color: var(--color-saffron); text-decoration: underline; }
+
+
+/* ---------- 7. Reduced motion ----------
+   style.css already shortens every animation; this stops the rings completely. */
+@media (prefers-reduced-motion: reduce) {
+  .case-hero__ring { animation: none; }
+}

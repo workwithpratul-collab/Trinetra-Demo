@@ -1,0 +1,170 @@
+/* =========================================================
+   Trinetra Creations: testimonials (Day 11, Home page)
+   Two looks for the same HTML (built by js/testimonials-carousel.js):
+     1. DEFAULT  = a simple stacked list of quote cards.
+        Used when Swiper didn't load (CDN down) or failed.
+     2. .is-carousel = one quote at a time, with dots and arrows.
+        The script adds this class only once Swiper is running.
+   Loaded AFTER Swiper's own CSS, so our rules win where they overlap.
+   ========================================================= */
+
+/* ---------- Heading row: title + the "Sample" badge ---------- */
+.testimonials-head h2 { display: inline; margin-right: var(--space-3); }
+.testimonials-head .badge { vertical-align: middle; }
+.testimonials-head .badge[hidden] { display: none; }   /* the hidden-attribute trap (Day 4) */
+
+/* Message shown only if the quotes couldn't be built */
+.testimonials__fallback { color: var(--color-text-muted); }
+.testimonials__fallback a { color: var(--color-saffron); text-decoration: underline; }
+
+/* ---------- 1. Default: stacked list ---------- */
+.testimonials__list {
+  display: grid;
+  gap: var(--space-6);
+  max-width: 48rem;
+}
+
+/* One quote = one frosted card */
+.testimonial {
+  padding: var(--space-8) var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+}
+
+.testimonial__quote p {
+  max-width: none;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  line-height: 1.35;
+}
+/* Gradient opening quote mark (same idea as the case-study quote) */
+.testimonial__quote::before {
+  content: "\201C";                       /* the “ character */
+  display: block;
+  height: 0.5em;
+  font-family: var(--font-display);
+  font-size: 4rem;
+  line-height: 1;
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.testimonial__by {
+  display: grid;
+  gap: var(--space-1);
+  margin-top: var(--space-6);
+}
+.testimonial__by span {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ---------- 2. Carousel mode ---------- */
+.is-carousel .testimonials__list {
+  display: flex;                          /* Swiper needs the slides in one row */
+  gap: 0;                                 /* Swiper sets the space itself (spaceBetween) */
+  max-width: none;
+}
+
+/* EQUAL HEIGHTS: Swiper makes every slide height: 100%. "auto" lets the
+   row stretch every slide to the tallest quote, so the dots and arrows
+   don't jump up and down as the quotes change length.
+   Day 14: the slide is now a wrapper <div> around the card (see the JS).
+   display: flex + flex: 1 make the card inside fill its stretched wrapper. */
+.is-carousel .testimonial-slide {
+  height: auto;
+  display: flex;
+}
+.is-carousel .testimonial {
+  flex: 1;
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+}
+@media (min-width: 768px) {
+  .is-carousel .testimonial { padding: var(--space-12); }
+}
+/* Grows gently from 22px (phones) to 32px (desktop). Day 11 fix: the
+   biggest heading size made one slide taller than a laptop screen. */
+.is-carousel .testimonial__quote p {
+  max-width: 42rem;
+  margin-inline: auto;
+  font-size: clamp(1.375rem, 1rem + 1.4vw, 2rem);
+  line-height: 1.3;
+}
+
+/* Controls row under the slider: ← dots → pause */
+.testimonials__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+/* Round buttons: 44 × 44 px = a comfortable target for a finger */
+.testimonials__btn {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: border-color var(--duration), background-color var(--duration);
+}
+.testimonials__btn:hover { border-color: var(--color-magenta); background: rgba(224, 33, 138, 0.15); }
+.testimonials__btn[hidden] { display: none; }
+.testimonials__pause { margin-left: var(--space-2); }
+
+/* THE DOTS
+   Swiper's own CSS makes each dot 8px and positions the row absolutely
+   over the slides. We undo the positioning and give each dot a bigger
+   invisible tap area (padding), while the visible dot stays small.
+   SPECIFICITY (bug found on Day 11): Swiper's rule
+   ".swiper-pagination-bullets.swiper-pagination-horizontal { width: 100% }"
+   has TWO classes. A one-class rule loses to it, so the dots took the full
+   row and pushed the arrows onto their own lines on phones.
+   Two classes here + loaded later = our rule wins. */
+.testimonials__controls .testimonials__dots {
+  position: static;
+  display: flex;
+  width: auto;
+}
+.testimonials__dots .swiper-pagination-bullet {
+  /* the button = the tap area; background-clip: content-box paints only the middle.
+     Day 13: 44px TALL (was 28) for fingers, still 28px wide so the row doesn't get
+     longer. Padding 17px top/bottom + 9px sides leaves the same 10px dot. With
+     border-radius 50% on a tall box, the inner corners still make a perfect circle
+     (22 - 17 = 14 - 9 = 5px radius). */
+  width: 28px;
+  height: 44px;
+  padding: 17px 9px;
+  margin: 0 !important;                   /* Swiper sets margins with high specificity */
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  background-clip: content-box;
+  opacity: 1;
+  transition: background-color var(--duration), padding var(--duration);
+}
+.testimonials__dots .swiper-pagination-bullet:hover { background-color: rgba(255, 255, 255, 0.8); }
+/* The active dot: brand magenta and slightly bigger (smaller padding = bigger middle).
+   Colour is not the only signal: size changes too, and aria-current says it aloud. */
+.testimonials__dots .swiper-pagination-bullet-active {
+  padding: 15px 7px;                      /* Day 13: same 14px dot as before, in the taller button */
+  background-color: var(--color-magenta);
+}
+
+/* Day 13: on the smallest phones (under 360px) the Pause button dropped onto a
+   line of its own. Slightly narrower dots (24px, still the WCAG minimum) and
+   8px gaps make the whole row fit in one line. The dots look the same. */
+@media (max-width: 359px) {
+  .testimonials__controls { gap: var(--space-2); }
+  .testimonials__dots .swiper-pagination-bullet { width: 24px; padding: 17px 7px; }
+  .testimonials__dots .swiper-pagination-bullet-active { padding: 15px 5px; }
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- PAGE FADE opt-in (Day 12). It MUST be written here in the page, not only in
+       css/style.css: Chrome decides very early whether to fade, and on fast loads it
+       decided before style.css was applied (tested: 3 fades out of 20 that way,
+       20 out of 20 like this). The fade's timing and look live in css/style.css. -->
+  <style>
+    @view-transition { navigation: auto; }
+    @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+  </style>
+  <!-- #LINK FIX: when the address has a #target (e.g. services.html#ads), switch
+       smooth scrolling off BEFORE the page is read, so the browser jumps there
+       instantly. A smooth glide could overshoot the target on first visits.
+       Smooth scrolling comes back 2 seconds after the page has loaded. -->
+  <script>
+    if (location.hash) {
+      document.documentElement.style.scrollBehavior = "auto";
+      addEventListener("load", function () {
+        setTimeout(function () { document.documentElement.style.scrollBehavior = ""; }, 2000);
+      });
+    }
+  </script>
+
+  <!-- SEO basics. These are the DEFAULTS: js/case.js swaps in the
+       project's own title and description once it knows which project to show. -->
+  <title>Case Study: Challenge, Approach, Results | Trinetra Creations</title>
+  <meta name="description" content="See how Trinetra Creations helps businesses stand out: the challenge we were given, the approach we took and the results it brought for the client.">
+  <!-- PREVIEW MODE (Day 15): keeps this private preview out of search engines.
+       Preview site: not for search engines. -->
+  <meta name="robots" content="noindex, nofollow">
+  <!-- NO canonical / og:url written here ON PURPOSE: this one HTML file shows many
+       case studies. A fixed canonical would tell Google they are all ONE page.
+       js/case.js adds both with this page's own ?project=… address (from SITE_URL in js/helpers.js). -->
+  <!-- theme-color: phones tint the browser's address bar with our near-black background -->
+  <meta name="theme-color" content="#0b0a0f">
+
+  <!-- SHARE PREVIEWS. Open Graph (og:) is read by WhatsApp, Facebook and LinkedIn; twitter:
+       by X. No image on purpose (decision: no share image), so they show a text card.
+       Same title + description as above, so every preview says the same thing.
+       js/case.js swaps in the project's own text, but most preview apps don't run
+       JavaScript, so they usually show these defaults. -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Trinetra Creations">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:title" content="Case Study: Challenge, Approach, Results | Trinetra Creations">
+  <meta property="og:description" content="See how Trinetra Creations helps businesses stand out: the challenge we were given, the approach we took and the results it brought for the client.">
+  <!-- "summary" = the small text card, which works without an image -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Case Study: Challenge, Approach, Results | Trinetra Creations">
+  <meta name="twitter:description" content="See how Trinetra Creations helps businesses stand out: the challenge we were given, the approach we took and the results it brought for the client.">
+
+  <!-- Favicons: same set as every page (see index.html for why the .ico has sizes="32x32") -->
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Raleway:wght@500&display=swap">
+
+  <!-- Shared design system, shared components, then this page's own styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/case.css">
+
+  <!-- Deferred scripts run in this order:
+       nav/footer → data → helpers (escapeHTML, counters) → this page's script
+       → scroll reveal (last, so it finds the sections case.js just built) -->
+  <!-- blocking="render" (Day 12): "don't paint the page until this has run",
+       so the header and footer are already there in the very first frame. -->
+  <script src="js/layout.js" defer blocking="render"></script>
+  <script src="js/projects.js" defer></script>
+  <script src="js/helpers.js" defer></script>
+  <script src="js/case.js" defer></script>
+  <!-- GSAP + ScrollTrigger (Day 12): the animation library, from the jsDelivr CDN.
+       PINNED to 3.15.0 (released 13 April 2026), never "@latest": an update could change
+       how the animations behave without us noticing, and brand-new releases are the
+       most likely to have bugs. integrity = fingerprint of the exact file we tested;
+       if the CDN sends anything else, the browser refuses it and js/motion.js's plain
+       CSS fade-in is used instead. -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"
+          integrity="sha384-XmJ9SoHtVOHoQUcKvFAzVXwdkKo1Ie3bhmSoIAkcdsHGaIrVJIkmozyq0FJeb/Ly"
+          crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"
+          integrity="sha384-wl5TeDVvOWt30Pbf8aSo2ZrzsOjddu3avOBvHe+p+OhJt9gP6w9YXmDkN5DK2/dF"
+          crossorigin="anonymous" defer></script>
+  <script src="js/motion-gsap.js" defer></script>    <!-- our GSAP motion (Day 12) -->
+  <script src="js/motion.js" defer></script>         <!-- CSS fallback; steps aside when GSAP runs -->
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Filled in by js/layout.js -->
+  <header class="site-header" id="site-header">
+    <noscript>
+      <nav class="nav container" aria-label="Main">
+        <a href="index.html">Trinetra Creations</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </noscript>
+  </header>
+
+  <!-- js/case.js replaces everything inside <main> with either
+       the case study or the "We couldn't find that project" message. -->
+  <main id="main">
+    <!-- Shows if JavaScript is off OR failed to load (case.js replaces it on success).
+         Same pattern as the Work page fallback. -->
+    <section class="page-intro case-fallback">
+      <div class="container">
+        <span class="eyebrow">Case study</span>
+        <h1>Our work, in detail.</h1>
+        <p class="page-intro__lead">
+          This page needs JavaScript to show the project. Please refresh, or
+          <a href="work.html">browse all our work</a>.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Filled in by js/layout.js -->
+  <footer class="site-footer" id="site-footer"></footer>
+</body>
+</html>

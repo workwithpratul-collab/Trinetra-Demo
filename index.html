@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- PAGE FADE opt-in (Day 12). It MUST be written here in the page, not only in
+       css/style.css: Chrome decides very early whether to fade, and on fast loads it
+       decided before style.css was applied (tested: 3 fades out of 20 that way,
+       20 out of 20 like this). The fade's timing and look live in css/style.css. -->
+  <style>
+    @view-transition { navigation: auto; }
+    @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+  </style>
+  <!-- #LINK FIX: when the address has a #target (e.g. services.html#ads), switch
+       smooth scrolling off BEFORE the page is read, so the browser jumps there
+       instantly. A smooth glide could overshoot the target on first visits.
+       Smooth scrolling comes back 2 seconds after the page has loaded. -->
+  <script>
+    if (location.hash) {
+      document.documentElement.style.scrollBehavior = "auto";
+      addEventListener("load", function () {
+        setTimeout(function () { document.documentElement.style.scrollBehavior = ""; }, 2000);
+      });
+    }
+  </script>
+
+  <!-- Runs before anything is drawn. It marks the page as "JavaScript is running",
+       which our CSS uses to hide the hero text until the intro finishes.
+       The 4-second timer is a safety net: if js/home.js ever fails to load,
+       the text still appears. -->
+  <script>
+    document.documentElement.classList.add("js");
+    setTimeout(function () { document.documentElement.classList.add("is-ready"); }, 4000);
+  </script>
+
+  <!-- SEO basics -->
+  <title>Trinetra Creations | Branding Agency with Vision and Insight</title>
+  <meta name="description" content="Trinetra Creations is a branding agency with vision and insight. Logos, identities, ads and campaigns that make your brand impossible to ignore.">
+  <!-- PREVIEW MODE (Day 15): keeps this private preview out of search engines.
+       Preview site: not for search engines. -->
+  <meta name="robots" content="noindex, nofollow">
+  <!-- CANONICAL = "this is the one official address of this page". Search engines list
+       THIS address even when people arrive by another one (with ?utm=…, #links, or "/index.html"). -->
+  <link rel="canonical" href="https://www.example-trinetra.com/">
+  <!-- theme-color: phones tint the browser's address bar with our near-black background -->
+  <meta name="theme-color" content="#0b0a0f">
+
+  <!-- SHARE PREVIEWS. Open Graph (og:) is read by WhatsApp, Facebook and LinkedIn; twitter:
+       by X. No image on purpose (decision: no share image), so they show a text card.
+       Same title + description as above, so every preview says the same thing. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Trinetra Creations">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:url" content="https://www.example-trinetra.com/">
+  <meta property="og:title" content="Trinetra Creations | Branding Agency with Vision and Insight">
+  <meta property="og:description" content="Trinetra Creations is a branding agency with vision and insight. Logos, identities, ads and campaigns that make your brand impossible to ignore.">
+  <!-- "summary" = the small text card, which works without an image -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Trinetra Creations | Branding Agency with Vision and Insight">
+  <meta name="twitter:description" content="Trinetra Creations is a branding agency with vision and insight. Logos, identities, ads and campaigns that make your brand impossible to ignore.">
+  <!-- STRUCTURED DATA (JSON-LD): facts about the business written in a format search
+       engines read directly (schema.org vocabulary). Home page only, because it describes
+       the whole site. Only TRUE facts: no address, phone, ratings or reviews.
+       "@graph" holds two things: the Organization (the studio) and the WebSite. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://www.example-trinetra.com/#organization",
+        "name": "Trinetra Creations",
+        "url": "https://www.example-trinetra.com/",
+        "logo": "https://www.example-trinetra.com/assets/logo.svg",
+        "slogan": "Imagine · Believe · Achieve",
+        "description": "Trinetra Creations is a branding agency with vision and insight. Logos, identities, ads and campaigns that make your brand impossible to ignore.",
+        "employee": {
+          "@type": "Person",
+          "name": "Ashutosh Mishra",
+          "jobTitle": "CEO"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.example-trinetra.com/#website",
+        "name": "Trinetra Creations",
+        "url": "https://www.example-trinetra.com/",
+        "inLanguage": "en",
+        "publisher": { "@id": "https://www.example-trinetra.com/#organization" }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Favicons (made from assets/logo.svg).
+       Relative paths, so they work on GitHub Pages' /repo-name/ address. -->
+  <!-- sizes="32x32" on the .ico is deliberate: it makes Chrome choose the
+       sharp SVG below, and keep the pixel-based .ico/PNG as fallbacks. -->
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Fonts: preconnect speeds up the font download -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Raleway:wght@500&display=swap">
+
+  <!-- Shared design system, then the Home page styles (order matters: later wins) -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/home-sections.css">
+
+  <!-- SWIPER (Day 11): the free carousel library, from the jsDelivr CDN.
+       https://swiperjs.com  ·  https://www.jsdelivr.com/package/npm/swiper
+       WHY THE EXACT VERSION (@14.3.0, released 28 Sept 2026):
+         - "swiper@latest" or "swiper@14" would quietly change whenever Swiper
+           publishes an update, and an update can rename options or change the
+           looks. Pinned = the site keeps working exactly as we tested it.
+         - We use a release that has been out for weeks, not days: brand-new
+           releases are the ones most likely to have bugs (or, rarely, be tampered with).
+       integrity = a fingerprint of the exact file we tested. If the CDN ever
+       serves a different file, the browser refuses to use it (and our plain
+       stacked list shows instead). crossorigin is required for that check.
+       To upgrade: change the version in BOTH URLs and recalculate both hashes.
+       Swiper's CSS goes BEFORE ours, so ours wins. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@14.3.0/swiper-bundle.min.css"
+        integrity="sha384-xkKzAc7JSlGq3SLCZHugx/i0gfYZf6kaFzg3v9/wz0HtsAFYPLz7aUvCFTac8KBk"
+        crossorigin="anonymous">
+  <link rel="stylesheet" href="css/testimonials.css">
+
+  <!-- Shared nav + footer, then the Home page script (defer = run after the HTML has loaded).
+       Deferred scripts run IN THIS ORDER, which matters:
+       projects.js (data) must come before home-sections.js (which reads it),
+       and motion.js goes last so it also finds the cards home-sections.js just built. -->
+  <!-- blocking="render" (Day 12): "don't paint the page until this has run",
+       so the header and footer are already there in the very first frame. -->
+  <script src="js/layout.js" defer blocking="render"></script>
+  <script src="js/home.js" defer></script>
+  <script src="js/projects.js" defer></script>
+  <script src="js/helpers.js" defer></script>        <!-- escapeHTML + counters (Day 5) -->
+  <script src="js/project-card.js" defer></script>
+  <script src="js/home-sections.js" defer></script>
+  <!-- Testimonials (Day 11): Swiper (CDN) → the quotes (data) → the script that builds them.
+       If the Swiper file fails, testimonials-carousel.js still runs and shows a plain list. -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@14.3.0/swiper-bundle.min.js"
+          integrity="sha384-nimz5qRuF8SOYqiuzkhgKleYiz6jIj9pUhB/LlAAsbB6I3fI9v9s5RMwMTzEyOAY"
+          crossorigin="anonymous" defer></script>
+  <script src="js/testimonials.js" defer></script>
+  <script src="js/testimonials-carousel.js" defer></script>
+  <!-- GSAP + ScrollTrigger (Day 12): the animation library, from the jsDelivr CDN.
+       PINNED to 3.15.0 (released 13 April 2026), never "@latest": an update could change
+       how the animations behave without us noticing, and brand-new releases are the
+       most likely to have bugs. integrity = fingerprint of the exact file we tested;
+       if the CDN sends anything else, the browser refuses it and js/motion.js's plain
+       CSS fade-in is used instead. -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"
+          integrity="sha384-XmJ9SoHtVOHoQUcKvFAzVXwdkKo1Ie3bhmSoIAkcdsHGaIrVJIkmozyq0FJeb/Ly"
+          crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"
+          integrity="sha384-wl5TeDVvOWt30Pbf8aSo2ZrzsOjddu3avOBvHe+p+OhJt9gP6w9YXmDkN5DK2/dF"
+          crossorigin="anonymous" defer></script>
+  <script src="js/motion-gsap.js" defer></script>    <!-- our GSAP motion (Day 12) -->
+  <script src="js/motion.js" defer></script>         <!-- CSS fallback; steps aside when GSAP runs -->
+</head>
+<body>
+  <!-- Lets keyboard users jump past the nav -->
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Filled in by js/layout.js -->
+  <header class="site-header" id="site-header">
+    <noscript>
+      <nav class="nav container" aria-label="Main">
+        <a href="index.html">Trinetra Creations</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </noscript>
+  </header>
+
+  <main id="main">
+    <!-- HERO: photo behind the text. aria-labelledby names this section after its heading. -->
+    <section class="hero" aria-labelledby="hero-title">
+      <!-- Layer 1: the photo. Save a picture as assets/hero.jpg and it appears here. -->
+      <div class="hero__media" aria-hidden="true"></div>
+      <!-- Layer 2: a dark-to-clear veil with a violet-to-saffron tint, for readable text -->
+      <div class="hero__veil" aria-hidden="true"></div>
+
+      <div class="container">
+        <div class="hero__content">
+          <!-- data-reveal="1/2/3" = the order each block slides in -->
+          <h1 class="hero__title" id="hero-title" data-reveal="1">
+            <span class="hero__line">Brands seen</span>
+            <span class="hero__line text-gradient">with three eyes.</span>
+          </h1>
+          <p class="hero__lead" data-reveal="2">
+            Trinetra Creations is a branding agency for businesses ready to be noticed.
+            We shape the logos, identities and ad campaigns that people remember.
+          </p>
+          <div class="hero__actions" data-reveal="3">
+            <a class="btn btn--primary" href="consultation.html">Book a free consultation</a>
+            <a class="btn btn--ghost" href="work.html">See our work</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. LOGO STRIP: client names sliding left forever (pure CSS, see home-sections.css).
+         The list is written twice so the loop is seamless; the copy is aria-hidden
+         so screen readers only read the names once.
+         TODO: these are SAMPLE names. Replace with real clients (in BOTH lists). -->
+    <section class="logo-strip" aria-label="Brands we have worked with (sample names)">
+      <p class="logo-strip__label">Trusted by growing brands <span class="badge">Sample</span></p>
+      <div class="logo-strip__viewport">
+        <div class="logo-strip__track">
+          <ul class="logo-strip__list" role="list">
+            <li>Mitti Café</li>
+            <li>Kaveri Textiles</li>
+            <li>Shree Sweets</li>
+            <li>Lotus Clinic</li>
+            <li>Nandi Motors</li>
+            <li>Rangoli Boutique</li>
+            <li>Aarav Realty</li>
+            <li>Pawan Steel</li>
+          </ul>
+          <ul class="logo-strip__list" role="list" aria-hidden="true">
+            <li>Mitti Café</li>
+            <li>Kaveri Textiles</li>
+            <li>Shree Sweets</li>
+            <li>Lotus Clinic</li>
+            <li>Nandi Motors</li>
+            <li>Rangoli Boutique</li>
+            <li>Aarav Realty</li>
+            <li>Pawan Steel</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. SERVICES: 4 frosted cards. Each card is one link; a gradient line
+         grows along its bottom edge on hover or keyboard focus. -->
+    <section class="section" aria-labelledby="services-title">
+      <div class="container">
+        <div class="section-head" data-scroll>
+          <span class="eyebrow">What we do</span>
+          <h2 id="services-title">Everything your brand needs to be seen.</h2>
+        </div>
+
+        <!-- BUG FIX: data-scroll lives on the GRID, not on each card.
+             - The 4 cards now fade in together, so cards 3 and 4 never sit
+               invisible on screen after cards 1 and 2 have appeared.
+             - The reveal's transform/transition rules no longer land on the
+               cards themselves, so their own hover lift works again. -->
+        <div class="services-grid" data-scroll>
+          <a class="card service-card" href="services.html#identity">
+            <span class="service-card__num text-gradient" aria-hidden="true">01</span>
+            <h3>Logo &amp; Identity</h3>
+            <p>A logo, colours and type that make your business instantly recognisable.</p>
+          </a>
+          <a class="card service-card" href="services.html#ads">
+            <span class="service-card__num text-gradient" aria-hidden="true">02</span>
+            <h3>Ads &amp; Campaigns</h3>
+            <p>Banners, posters and print ads with one clear message that sells.</p>
+          </a>
+          <a class="card service-card" href="services.html#social">
+            <span class="service-card__num text-gradient" aria-hidden="true">03</span>
+            <h3>Social Media</h3>
+            <p>Posts and templates that keep your feed consistent and on-brand.</p>
+          </a>
+          <a class="card service-card" href="services.html#packaging">
+            <span class="service-card__num text-gradient" aria-hidden="true">04</span>
+            <h3>Packaging</h3>
+            <p>Boxes and labels that stand out on the shelf and feel premium in hand.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. FEATURED WORK: the <ul> is filled by js/home-sections.js using the
+         data in js/projects.js (3 projects marked featured: true). -->
+    <section class="section" aria-labelledby="work-title">
+      <div class="container">
+        <div class="section-head" data-scroll>
+          <span class="eyebrow">Selected work</span>
+          <h2 id="work-title">Brands we've helped people notice.</h2>
+        </div>
+
+        <!-- Cards appear inside this list -->
+        <ul class="work-grid" id="work-grid" role="list" data-scroll></ul>
+        <!-- Without JavaScript, this message shows instead -->
+        <noscript>
+          <p>Our featured projects need JavaScript to display. <a href="work.html">Browse all our work</a>.</p>
+        </noscript>
+
+        <div class="work-more" data-scroll>
+          <a class="btn btn--ghost" href="work.html">See all projects</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. STATS: the final numbers are written here, so they show without JavaScript.
+         js/home-sections.js resets them to 0 and counts up when they scroll into view.
+         data-count = the target number, data-suffix = what goes after it.
+         TODO: these are SAMPLE numbers. Replace with real ones (and remove the note). -->
+    <section class="section" aria-labelledby="stats-title">
+      <div class="container">
+        <h2 id="stats-title" class="visually-hidden">Trinetra Creations in numbers</h2>
+        <ul class="stats-grid" role="list" data-scroll>
+          <li class="stat">
+            <span class="stat__num text-gradient" data-count="120" data-suffix="+">120+</span>
+            <span class="stat__label">Projects delivered</span>
+          </li>
+          <li class="stat">
+            <span class="stat__num text-gradient" data-count="60" data-suffix="+">60+</span>
+            <span class="stat__label">Happy clients</span>
+          </li>
+          <li class="stat">
+            <span class="stat__num text-gradient" data-count="5" data-suffix="+">5+</span>
+            <span class="stat__label">Years of experience</span>
+          </li>
+          <li class="stat">
+            <span class="stat__num text-gradient" data-count="98" data-suffix="%">98%</span>
+            <span class="stat__label">Clients who return</span>
+          </li>
+        </ul>
+        <p class="stats-note">Sample numbers for preview. Real figures coming soon.</p>
+      </div>
+    </section>
+
+    <!-- 5. TESTIMONIALS (Day 11): the quotes live in js/testimonials.js (SAMPLES for now).
+         js/testimonials-carousel.js fills the box below: always as a stacked list,
+         then as a carousel if Swiper loaded. -->
+    <section class="section" aria-labelledby="testimonials-title">
+      <div class="container">
+        <div class="section-head testimonials-head" data-scroll>
+          <span class="eyebrow">Kind words</span>
+          <div>
+            <h2 id="testimonials-title">What our clients say.</h2>
+            <!-- Shown by the script while SHOW_SAMPLE_TESTIMONIALS is true -->
+            <span class="badge" id="testimonials-badge" hidden>Sample quotes</span>
+          </div>
+        </div>
+
+        <!-- Filled by js/testimonials-carousel.js, which REPLACES this paragraph.
+             So it only stays if JavaScript is off or a script failed to load. -->
+        <div class="testimonials" id="testimonials" data-scroll>
+          <p class="testimonials__fallback">
+            Our client testimonials need JavaScript to display.
+            <a href="work.html">See our work</a> instead.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. CLOSING CALL TO ACTION: uses the Free Consultation tagline from the brief -->
+    <section class="section" aria-labelledby="cta-title">
+      <div class="container">
+        <div class="cta-band" data-scroll>
+          <h2 id="cta-title">Don't know how to advertise yourself?</h2>
+          <p>Ask us, we will guide you.</p>
+          <a class="btn btn--primary" href="consultation.html">Book a free consultation</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Filled in by js/layout.js -->
+  <footer class="site-footer" id="site-footer"></footer>
+</body>
+</html>

@@ -1,0 +1,305 @@
+/* =========================================================
+   Trinetra Creations: "Build your order" picker (Day 10)
+   Loaded by services.html. Text boxes, error messages and the
+   button come from the shared form styles (components.css, section 8);
+   this file styles the layout, the radio cards, the pills and the summary.
+   ========================================================= */
+
+/* The "Build your order" pill in the jump links lands here, clear of the sticky header */
+.order-section { scroll-margin-top: calc(var(--nav-height) + var(--space-4)); }
+
+/* "Needs JavaScript" note (js/order.js removes it once the picker works) */
+.order-fallback { color: var(--color-text-muted); }
+.order-fallback a { color: var(--color-saffron); text-decoration: underline; }
+
+/* THE HIDDEN-ATTRIBUTE TRAP (Day 4) for everything inside the picker:
+   .field, .order__step and the summary rows all have display rules that would
+   beat the browser's [hidden]. Two classes' worth of specificity (0-2-0) beats them all. */
+.order[hidden],
+.order [hidden] { display: none; }
+
+/* ---------- 1. Layout ----------
+   Phones: choices, then summary underneath.
+   Wide screens: choices on the left, summary on the right, sticky while you scroll. */
+.form.order { gap: var(--space-8); }
+@media (min-width: 1024px) {
+  .form.order {
+    grid-template-columns: 1.7fr 1fr;
+    align-items: start;
+    column-gap: var(--space-12);
+  }
+  .order-summary {
+    position: sticky;
+    top: calc(var(--nav-height) + var(--space-6));
+  }
+}
+
+.order__choices {
+  display: grid;
+  gap: var(--space-12);
+}
+
+/* Each step: a <fieldset> (step 1) or a <div> (step 2). Remove fieldset defaults. */
+.order__step {
+  display: grid;
+  gap: var(--space-6);
+  min-width: 0;                     /* fieldsets refuse to shrink on phones without this */
+  border: 0;
+  padding: 0;
+}
+
+/* "1 Choose a product": number circle + title */
+.order__legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0;
+  margin-bottom: var(--space-2);    /* <legend> ignores the fieldset's grid gap */
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+}
+.order__num {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--gradient-chip);     /* small white number: no saffron (contrast) */
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: #fff;
+}
+
+/* ---------- 2. Product cards (radio buttons in disguise) ---------- */
+/* 2 per row on phones, 3 per row from tablets */
+.product-grid {
+  display: grid;
+  /* Day 13: minmax(0, 1fr) instead of 1fr. Plain "1fr" never lets a column get
+     narrower than its longest word, so with large text the 2 cards pushed the page
+     sideways. minmax(0, …) lets the columns share the space and the text wraps. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+@media (min-width: 640px) {
+  .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+}
+
+.product-card {
+  position: relative;               /* the invisible radio is stretched over this box */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  cursor: pointer;
+  transition: border-color var(--duration), background-color var(--duration), transform var(--duration) var(--ease-out);
+}
+.product-card:hover { border-color: rgba(255, 255, 255, 0.25); transform: translateY(-2px); }
+
+/* THE REAL RADIO: invisible (opacity 0) but still there, covering the whole card.
+   Clicks, Tab, arrow keys and screen readers all use it as normal.
+   (display: none or visibility: hidden would remove it from the keyboard too.) */
+.product-card__radio,
+.pill__radio {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* CHOSEN: :has() = "a card that HAS a checked radio inside" */
+.product-card:has(.product-card__radio:checked) {
+  border-color: var(--color-magenta);
+  background: rgba(224, 33, 138, 0.1);
+}
+/* A tick badge in the corner of the chosen card (decorative; the radio says "checked") */
+.product-card:has(.product-card__radio:checked)::after {
+  content: "✓";
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--gradient-chip);     /* small white tick: no saffron (contrast) */
+  font-weight: 700;
+  font-size: var(--text-sm);
+  color: #fff;
+}
+/* KEYBOARD FOCUS: the radio is invisible, so we draw the ring on its card.
+   :focus-visible = only for keyboard use, not mouse clicks. */
+.product-card:has(.product-card__radio:focus-visible) {
+  outline: 2px solid var(--color-saffron);
+  outline-offset: 3px;
+}
+
+.product-card__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.2;
+}
+.product-card__desc {
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+/* ---------- 3. Sample art: gradient + a simple white outline of the product ---------- */
+/* --from / --to are set per product by js/order.js */
+.order-art {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background:
+    radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.25), transparent 45%),
+    linear-gradient(135deg, var(--from, #2a2633), var(--to, #15131c));
+}
+/* Before a product is chosen: an empty dashed frame */
+.order-art--empty {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+/* Optional real photo on top of the gradient (removed by onerror if missing) */
+.order-art__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The outline, centred. Each --shape only changes the proportions. */
+.order-art__shape {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 4px;
+}
+.order-art__shape--circle   { width: 38%; aspect-ratio: 1; border-radius: 50%; }   /* logo */
+.order-art__shape--wide     { width: 72%; aspect-ratio: 2 / 1; }                    /* banner: 2:1 */
+.order-art__shape--portrait { width: 34%; aspect-ratio: 1 / 1.414; }                /* A-size paper ratio */
+.order-art__shape--grid {                                                           /* 3 × 3 post grid */
+  width: 44%;
+  aspect-ratio: 1;
+  /* Two thin white lines across and two down, drawn with gradients */
+  background-image:
+    linear-gradient(to right, transparent calc(33.3% - 1px), rgba(255, 255, 255, 0.85) 0 calc(33.3% + 1px),
+                    transparent 0 calc(66.6% - 1px), rgba(255, 255, 255, 0.85) 0 calc(66.6% + 1px), transparent 0),
+    linear-gradient(to bottom, transparent calc(33.3% - 1px), rgba(255, 255, 255, 0.85) 0 calc(33.3% + 1px),
+                    transparent 0 calc(66.6% - 1px), rgba(255, 255, 255, 0.85) 0 calc(66.6% + 1px), transparent 0);
+}
+.order-art__shape--box { width: 40%; aspect-ratio: 1.1; }                           /* packaging box */
+.order-art__shape--box::before {                                                    /* its lid */
+  content: "";
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  top: -2px;
+  height: 24%;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ---------- 4. Option pills (size, style) ---------- */
+.order-group {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+}
+.order-group legend {
+  padding: 0;
+  margin-bottom: var(--space-2);
+}
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.pill { position: relative; }       /* the invisible radio covers the pill */
+.pill span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;                 /* comfortable tap size */
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-pill);
+  background: rgba(11, 10, 15, 0.6);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  transition: border-color var(--duration), background-color var(--duration);
+}
+.pill:hover span { border-color: rgba(255, 255, 255, 0.35); }
+/* Chosen pill: brand gradient (same look as the Work page filters) */
+.pill:has(.pill__radio:checked) span {
+  background: var(--gradient-chip);     /* white pill text: no saffron (contrast) */
+  border-color: transparent;
+  color: #fff;
+}
+.pill:has(.pill__radio:focus-visible) span {
+  outline: 2px solid var(--color-saffron);
+  outline-offset: 3px;
+}
+/* A group with an error: red outline on every pill */
+.order-group[aria-invalid="true"] .pill span { border-color: var(--color-error); }
+
+/* The quantity box doesn't need to be wide */
+.order-qty input { max-width: 12rem; }
+
+/* ---------- 5. Summary panel ---------- */
+.order-summary {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-6);
+}
+.order-summary__title { font-size: var(--text-xl); }
+.order-summary__art .order-art { aspect-ratio: 16 / 9; }
+
+/* Label on the left, choice on the right, a thin line between rows */
+.order-summary__list > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: var(--space-2);
+  border-top: 1px solid var(--color-border);
+}
+.order-summary__list dt {
+  flex-shrink: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.order-summary__list dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 500;
+  overflow-wrap: anywhere;          /* long notes/custom sizes wrap instead of overflowing */
+}
+/* Notes: shown as typed, keeping line breaks (pre-wrap) */
+.order-summary__notes dd {
+  font-weight: 400;
+  white-space: pre-wrap;
+  color: var(--color-text-muted);
+}
+
+.order-summary__quote {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 153, 51, 0.08);
+  border: 1px solid rgba(255, 153, 51, 0.3);
+  font-size: var(--text-sm);
+}
+.order-summary__btn { justify-self: stretch; justify-content: center; }

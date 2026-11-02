@@ -1,0 +1,248 @@
+/* =========================================================
+   Trinetra Creations: About page styles (Day 7)
+   Loaded only by about.html, after style.css and components.css.
+   Page intro, .card, .section-head and the CTA band come from
+   components.css; this file only styles what is unique to About.
+   Mobile-first: base rules = phones, @media adds wider layouts.
+   ========================================================= */
+
+/* ---------- 1. Our story ---------- */
+/* The story sits right under the page intro, so it needs no top gap.
+   Two classes (.section.about-story) beat the one-class .section rule. */
+.section.about-story { padding-top: 0; }
+
+/* Phones: text, then the facts card underneath.
+   Desktop: text on the left (wider), card on the right. */
+.about-story__grid {
+  display: grid;
+  gap: var(--space-12);
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .about-story__grid { grid-template-columns: 1.5fr 1fr; gap: var(--space-16); }
+}
+
+.about-story__text h2 { margin-bottom: var(--space-6); }
+.about-story__text p + p { margin-top: var(--space-4); }
+.about-story__text p { color: var(--color-text-muted); }
+
+/* "In short" facts card: each label/value pair is one row with a divider */
+.about-facts__title {
+  margin-bottom: var(--space-4);
+  font-size: 1.375rem;
+}
+.about-facts dl { display: grid; }
+.about-facts dl > div {
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+.about-facts dt {
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-saffron);
+}
+.about-facts dd { margin: var(--space-1) 0 0; }   /* browsers indent <dd> by default */
+/* Day 13: inline-block + 12px padding above and below = a 46px tall tap area
+   (was 20px). The negative margins cancel the padding, so the row keeps its height. */
+.about-facts a {
+  display: inline-block;
+  padding-block: var(--space-3);
+  margin-block: calc(var(--space-3) * -1);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.about-facts a:hover { color: var(--color-saffron); }
+
+/* ---------- 2. The meaning of "Trinetra" ---------- */
+.meaning__grid {
+  display: grid;
+  gap: var(--space-12);
+  align-items: center;
+}
+@media (min-width: 900px) {
+  .meaning__grid { grid-template-columns: 1fr 1.2fr; gap: var(--space-16); }
+}
+
+/* The logo inside a glowing circle.
+   aspect-ratio: 1 keeps it a perfect circle at any width;
+   the radial gradient is the "glow", the inset shadow is a soft inner ring. */
+.meaning__visual {
+  display: grid;
+  place-items: center;              /* centres the logo both ways */
+  width: min(100%, 22rem);          /* never wider than the column or 22rem */
+  aspect-ratio: 1;
+  margin-inline: auto;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(224, 33, 138, 0.35), rgba(123, 47, 247, 0.18) 45%, transparent 70%);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+.meaning__visual img { width: 50%; }
+
+.meaning__lead {
+  margin-top: var(--space-6);
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+}
+.meaning__lead em { font-style: italic; color: var(--color-text); }
+
+/* The three "eyes". A CSS counter numbers them 1, 2, 3
+   (same technique as the case-study steps on Day 5). */
+/* list-style: none + padding: 0 remove the browser's own "1. 2. 3." (style.css only resets <ul>) */
+.eyes {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-8);
+  counter-reset: eye;
+}
+.eyes__item {
+  position: relative;
+  padding-left: var(--space-12);    /* room for the number circle */
+  counter-increment: eye;
+}
+.eyes__item::before {
+  content: counter(eye);
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--gradient-chip);     /* small white number: no saffron (contrast) */
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: #fff;
+}
+.eyes__item h3 { font-size: 1.375rem; }
+.eyes__item p { margin-top: var(--space-1); color: var(--color-text-muted); }
+
+/* ---------- 3. Values ---------- */
+/* 1 column on phones, 2 on tablets, 4 on wide screens */
+.values-grid {
+  display: grid;
+  gap: var(--space-4);
+}
+@media (min-width: 640px)  { .values-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .values-grid { grid-template-columns: repeat(4, 1fr); gap: var(--space-6); } }
+
+.value-card__num {
+  display: block;
+  margin-bottom: var(--space-6);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+}
+.value-card h3 { margin-bottom: var(--space-3); font-size: 1.375rem; }
+.value-card p { color: var(--color-text-muted); }
+
+/* ---------- 4. Team ---------- */
+/* Phones: photo on top, text below. Tablet and up: side by side. */
+.team-card {
+  display: grid;
+  gap: var(--space-8);
+  align-items: center;
+  max-width: 56rem;
+}
+@media (min-width: 768px) {
+  .team-card { grid-template-columns: minmax(14rem, 1fr) 1.6fr; gap: var(--space-12); }
+}
+
+/* The photo frame. Works for a real <img> too (object-fit: cover crops,
+   never stretches). 4:5 = a classic portrait shape. */
+.team-card__photo {
+  width: 100%;
+  max-width: 22rem;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}
+
+/* Placeholder look: brand gradient, big initials, a small "coming soon" note */
+.team-card__photo--placeholder {
+  position: relative;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 75% 20%, rgba(255, 255, 255, 0.22), transparent 45%),
+    linear-gradient(150deg, var(--color-violet), var(--color-magenta) 60%, var(--color-saffron));
+}
+.team-card__initials {
+  font-family: var(--font-brand);
+  font-weight: 500;
+  font-size: clamp(3rem, 2rem + 4vw, 4.5rem);
+  letter-spacing: 0.15em;
+  padding-left: 0.15em;             /* balances the letter-spacing after the last letter */
+  color: #fff;
+}
+.team-card__soon {
+  position: absolute;
+  bottom: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  /* the same dark pill look as .badge in components.css */
+  padding: 0.2em 0.75em;
+  border-radius: var(--radius-pill);
+  background: rgba(11, 10, 15, 0.7);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.team-card__name { font-size: var(--text-xl); }
+.team-card__role {
+  margin-top: var(--space-1);
+  font-family: var(--font-brand);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--color-saffron);
+}
+.team-card__body p:not(.team-card__role) {
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+}
+
+/* ---------- 5. Tagline band: Imagine · Believe · Achieve ---------- */
+.motto { text-align: center; }
+
+/* Raleway (the brand font), wide-spaced capitals, like the wordmark */
+.motto__title {
+  font-family: var(--font-brand);
+  font-weight: 500;
+  font-size: clamp(1.25rem, 0.8rem + 2.6vw, 2.75rem);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;        /* HTML stays "Imagine", screen readers read normal words */
+  line-height: 1.5;
+}
+.motto__dot { color: var(--color-magenta); }
+
+/* Thin gradient line under the title, centred */
+.motto__title::after {
+  content: "";
+  display: block;
+  width: 6rem;
+  height: 2px;
+  margin: var(--space-8) auto 0;
+  background: var(--gradient-brand);
+}
+
+.motto__grid {
+  display: grid;
+  gap: var(--space-8);
+  margin-top: var(--space-12);
+}
+@media (min-width: 768px) { .motto__grid { grid-template-columns: repeat(3, 1fr); } }
+
+.motto__grid h3 { font-size: 1.375rem; }
+.motto__grid p {
+  margin: var(--space-2) auto 0;    /* auto side margins centre the 65ch-wide <p> */
+  max-width: 26ch;
+  color: var(--color-text-muted);
+}

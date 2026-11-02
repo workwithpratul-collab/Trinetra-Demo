@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- PAGE FADE opt-in (Day 12). It MUST be written here in the page, not only in
+       css/style.css: Chrome decides very early whether to fade, and on fast loads it
+       decided before style.css was applied (tested: 3 fades out of 20 that way,
+       20 out of 20 like this). The fade's timing and look live in css/style.css. -->
+  <style>
+    @view-transition { navigation: auto; }
+    @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+  </style>
+  <!-- #LINK FIX: when the address has a #target (e.g. services.html#ads), switch
+       smooth scrolling off BEFORE the page is read, so the browser jumps there
+       instantly. A smooth glide could overshoot the target on first visits.
+       Smooth scrolling comes back 2 seconds after the page has loaded. -->
+  <script>
+    if (location.hash) {
+      document.documentElement.style.scrollBehavior = "auto";
+      addEventListener("load", function () {
+        setTimeout(function () { document.documentElement.style.scrollBehavior = ""; }, 2000);
+      });
+    }
+  </script>
+
+  <!-- SEO basics: a unique title and description for this page -->
+  <title>About Trinetra Creations: Vision, Insight and Craft</title>
+  <meta name="description" content="Meet Trinetra Creations: a branding studio led by Ashutosh Mishra. Our story, what the name Trinetra means, and the values behind our work.">
+  <!-- PREVIEW MODE (Day 15): keeps this private preview out of search engines.
+       Preview site: not for search engines. -->
+  <meta name="robots" content="noindex, nofollow">
+  <!-- CANONICAL = "this is the one official address of this page". Search engines list
+       THIS address even when people arrive by another one (with ?utm=…, #links, or "/index.html"). -->
+  <link rel="canonical" href="https://www.example-trinetra.com/about.html">
+  <!-- theme-color: phones tint the browser's address bar with our near-black background -->
+  <meta name="theme-color" content="#0b0a0f">
+
+  <!-- SHARE PREVIEWS. Open Graph (og:) is read by WhatsApp, Facebook and LinkedIn; twitter:
+       by X. No image on purpose (decision: no share image), so they show a text card.
+       Same title + description as above, so every preview says the same thing. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Trinetra Creations">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:url" content="https://www.example-trinetra.com/about.html">
+  <meta property="og:title" content="About Trinetra Creations: Vision, Insight and Craft">
+  <meta property="og:description" content="Meet Trinetra Creations: a branding studio led by Ashutosh Mishra. Our story, what the name Trinetra means, and the values behind our work.">
+  <!-- "summary" = the small text card, which works without an image -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="About Trinetra Creations: Vision, Insight and Craft">
+  <meta name="twitter:description" content="Meet Trinetra Creations: a branding studio led by Ashutosh Mishra. Our story, what the name Trinetra means, and the values behind our work.">
+
+  <!-- Favicons: same set as every page (see index.html for why the .ico has sizes="32x32") -->
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Fonts. Raleway 500 is added here (Day 7): the wordmark and tagline use it,
+       and this page shows the tagline in large type. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Raleway:wght@500&display=swap">
+
+  <!-- Shared design system, shared components, then this page's own styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/about.css">
+
+  <!-- This page is plain HTML, so it only needs the nav/footer and the scroll reveal -->
+  <!-- blocking="render" (Day 12): "don't paint the page until this has run",
+       so the header and footer are already there in the very first frame. -->
+  <script src="js/layout.js" defer blocking="render"></script>
+  <!-- GSAP + ScrollTrigger (Day 12): the animation library, from the jsDelivr CDN.
+       PINNED to 3.15.0 (released 13 April 2026), never "@latest": an update could change
+       how the animations behave without us noticing, and brand-new releases are the
+       most likely to have bugs. integrity = fingerprint of the exact file we tested;
+       if the CDN sends anything else, the browser refuses it and js/motion.js's plain
+       CSS fade-in is used instead. -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"
+          integrity="sha384-XmJ9SoHtVOHoQUcKvFAzVXwdkKo1Ie3bhmSoIAkcdsHGaIrVJIkmozyq0FJeb/Ly"
+          crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"
+          integrity="sha384-wl5TeDVvOWt30Pbf8aSo2ZrzsOjddu3avOBvHe+p+OhJt9gP6w9YXmDkN5DK2/dF"
+          crossorigin="anonymous" defer></script>
+  <script src="js/motion-gsap.js" defer></script>    <!-- our GSAP motion (Day 12) -->
+  <script src="js/motion.js" defer></script>         <!-- CSS fallback; steps aside when GSAP runs -->
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Filled in by js/layout.js -->
+  <header class="site-header" id="site-header">
+    <noscript>
+      <nav class="nav container" aria-label="Main">
+        <a href="index.html">Trinetra Creations</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </noscript>
+  </header>
+
+  <main id="main">
+    <!-- 1. PAGE INTRO: the one h1 on this page (shared .page-intro style) -->
+    <section class="page-intro" aria-labelledby="page-title">
+      <div class="container">
+        <span class="eyebrow">About us</span>
+        <h1 id="page-title">Three eyes on <span class="text-gradient">every brand.</span></h1>
+        <p class="page-intro__lead">
+          We're a branding studio that looks closer: at your business, your
+          customers and the street you trade on, before we design a thing.
+        </p>
+      </div>
+    </section>
+
+    <!-- 2. OUR STORY: text on the left, a quick-facts card on the right (desktop) -->
+    <section class="section about-story" aria-labelledby="story-title">
+      <div class="container about-story__grid" data-scroll>
+        <div class="about-story__text">
+          <span class="eyebrow">Our story</span>
+          <h2 id="story-title">Great businesses deserve to be seen.</h2>
+          <p>
+            Trinetra Creations started with a simple frustration. In market after
+            market we saw the same thing: sweets made to family recipes, clinics
+            with caring doctors, shops with honest prices, and signboards, menus
+            and ads that said none of it.
+          </p>
+          <p>
+            So we set up a studio to fix that. We sit down with owners, listen to
+            what makes them different, and turn it into a brand people remember:
+            a logo, a voice, ads and packaging that all tell the same story.
+          </p>
+          <p>
+            Today we work with local shops, startups and growing businesses, from
+            a single logo to a full launch campaign. The size of the job changes.
+            The care doesn't.
+          </p>
+        </div>
+
+        <!-- <dl> = description list: a label (<dt>) and its value (<dd>) -->
+        <aside class="card about-facts" aria-label="Trinetra Creations in short">
+          <h3 class="about-facts__title">In short</h3>
+          <dl>
+            <div>
+              <dt>Who we are</dt>
+              <dd>A branding studio led by Ashutosh Mishra, CEO</dd>
+            </div>
+            <div>
+              <dt>What we do</dt>
+              <dd>Logos &amp; identity, ads &amp; campaigns, social media, packaging</dd>
+            </div>
+            <div>
+              <dt>Who we work with</dt>
+              <dd>Local businesses, startups and growing brands</dd>
+            </div>
+            <div>
+              <dt>How we start</dt>
+              <dd><a href="consultation.html">A free consultation</a></dd>
+            </div>
+          </dl>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 3. THE MEANING OF "TRINETRA": logo in a glowing circle + the three "eyes" -->
+    <section class="section meaning" aria-labelledby="meaning-title">
+      <div class="container meaning__grid" data-scroll>
+        <!-- Decorative picture: alt="" and aria-hidden because the text says it all -->
+        <div class="meaning__visual" aria-hidden="true">
+          <img src="assets/logo.svg" alt="" width="384" height="364" loading="lazy">
+        </div>
+
+        <div>
+          <span class="eyebrow">Our name</span>
+          <h2 id="meaning-title">Why <span class="text-gradient">Trinetra?</span></h2>
+          <p class="meaning__lead">
+            In Sanskrit, <em lang="sa-Latn">tri</em> means three and
+            <em lang="sa-Latn">netra</em> means eye. In Indian tradition the
+            third eye is the eye of inner sight: it sees what ordinary eyes miss.
+            That's how we try to look at every brand.
+          </p>
+
+          <!-- An ordered list: the three eyes, in order -->
+          <ol class="eyes" role="list">
+            <li class="eyes__item">
+              <h3>Vision</h3>
+              <p>We see where your brand could be, not just where it is today.</p>
+            </li>
+            <li class="eyes__item">
+              <h3>Insight</h3>
+              <p>We look past the surface to what your customers really want and feel.</p>
+            </li>
+            <li class="eyes__item">
+              <h3>Craft</h3>
+              <p>We turn what we see into design that is right down to the last detail.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. VALUES: 4 frosted-glass cards (shared .card), revealed as one block -->
+    <section class="section" aria-labelledby="values-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">What we stand for</span>
+          <h2 id="values-title">Our values</h2>
+        </div>
+
+        <ul class="values-grid" role="list" data-scroll>
+          <li class="card value-card">
+            <span class="value-card__num text-gradient" aria-hidden="true">01</span>
+            <h3>Clarity first</h3>
+            <p>One clear message beats ten clever ones. If a customer can't get it in a glance, we keep working.</p>
+          </li>
+          <li class="card value-card">
+            <span class="value-card__num text-gradient" aria-hidden="true">02</span>
+            <h3>Honest advice</h3>
+            <p>If you don't need something, we'll tell you, even when it means a smaller bill for us.</p>
+          </li>
+          <li class="card value-card">
+            <span class="value-card__num text-gradient" aria-hidden="true">03</span>
+            <h3>Craft in the details</h3>
+            <p>Spacing, colour and wording are checked on a real phone and a real print, not just on our screen.</p>
+          </li>
+          <li class="card value-card">
+            <span class="value-card__num text-gradient" aria-hidden="true">04</span>
+            <h3>Your growth, our success</h3>
+            <p>We judge our work by what it does for your business: more calls, more visits, more sales.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 5. TEAM: one person for now. Copy this <article> to add more people. -->
+    <section class="section" aria-labelledby="team-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">The team</span>
+          <h2 id="team-title">The people behind the work</h2>
+        </div>
+
+        <article class="team-card" data-scroll>
+          <!-- role="img" + aria-label make screen readers treat the block as one picture. -->
+          <div class="team-card__photo team-card__photo--placeholder"
+               role="img" aria-label="Photo of Ashutosh Mishra (coming soon)">
+            <span class="team-card__initials" aria-hidden="true">AM</span>
+            <span class="team-card__soon" aria-hidden="true">Photo coming soon</span>
+          </div>
+
+          <div class="team-card__body">
+            <h3 class="team-card__name">Ashutosh Mishra</h3>
+            <p class="team-card__role">CEO</p>
+            <p>
+              Ashutosh leads every project, from the first conversation to the
+              final file. He believes a good brand starts with listening:
+              understanding the owner, the customer and the street the shop
+              stands on, before a single sketch is made.
+            </p>
+            <p>
+              Ask him about your brand and he'll ask you about your customers first.
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 6. TAGLINE BAND: Imagine · Believe · Achieve -->
+    <section class="section motto" aria-labelledby="motto-title">
+      <div class="container" data-scroll>
+        <!-- The visible heading uses the brand font; the dots are decorative,
+             so they are hidden from screen readers (no "dot dot" read aloud). -->
+        <h2 id="motto-title" class="motto__title">
+          Imagine <span class="motto__dot" aria-hidden="true">·</span>
+          Believe <span class="motto__dot" aria-hidden="true">·</span>
+          Achieve
+        </h2>
+
+        <ul class="motto__grid" role="list">
+          <li>
+            <h3>Imagine</h3>
+            <p>We picture what your brand could become.</p>
+          </li>
+          <li>
+            <h3>Believe</h3>
+            <p>We commit to one strong idea and back it with research.</p>
+          </li>
+          <li>
+            <h3>Achieve</h3>
+            <p>We deliver work that brings real results.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7. CLOSING CALL TO ACTION (shared component) -->
+    <section class="section" aria-labelledby="cta-title">
+      <div class="container">
+        <div class="cta-band" data-scroll>
+          <h2 id="cta-title">Let's look at your brand together.</h2>
+          <p>Don't know how to advertise yourself? Ask us, we will guide you.</p>
+          <a class="btn btn--primary" href="consultation.html">Book a free consultation</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Filled in by js/layout.js -->
+  <footer class="site-footer" id="site-footer"></footer>
+</body>
+</html>

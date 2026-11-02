@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- PAGE FADE opt-in (Day 12). It MUST be written here in the page, not only in
+       css/style.css: Chrome decides very early whether to fade, and on fast loads it
+       decided before style.css was applied (tested: 3 fades out of 20 that way,
+       20 out of 20 like this). The fade's timing and look live in css/style.css. -->
+  <style>
+    @view-transition { navigation: auto; }
+    @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+  </style>
+  <!-- #LINK FIX: when the address has a #target (e.g. services.html#ads), switch
+       smooth scrolling off BEFORE the page is read, so the browser jumps there
+       instantly. A smooth glide could overshoot the target on first visits.
+       Smooth scrolling comes back 2 seconds after the page has loaded. -->
+  <script>
+    if (location.hash) {
+      document.documentElement.style.scrollBehavior = "auto";
+      addEventListener("load", function () {
+        setTimeout(function () { document.documentElement.style.scrollBehavior = ""; }, 2000);
+      });
+    }
+  </script>
+
+  <!-- SEO basics: a unique title and description for this page -->
+  <title>Services: Logo, Ads, Social &amp; Packaging | Trinetra Creations</title>
+  <meta name="description" content="Branding services by Trinetra Creations: logo and identity design, ads and campaigns, social media, and packaging. See what's included and how we work.">
+  <!-- PREVIEW MODE (Day 15): keeps this private preview out of search engines.
+       Preview site: not for search engines. -->
+  <meta name="robots" content="noindex, nofollow">
+  <!-- CANONICAL = "this is the one official address of this page". Search engines list
+       THIS address even when people arrive by another one (with ?utm=…, #links, or "/index.html"). -->
+  <link rel="canonical" href="https://www.example-trinetra.com/services.html">
+  <!-- theme-color: phones tint the browser's address bar with our near-black background -->
+  <meta name="theme-color" content="#0b0a0f">
+
+  <!-- SHARE PREVIEWS. Open Graph (og:) is read by WhatsApp, Facebook and LinkedIn; twitter:
+       by X. No image on purpose (decision: no share image), so they show a text card.
+       Same title + description as above, so every preview says the same thing. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Trinetra Creations">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:url" content="https://www.example-trinetra.com/services.html">
+  <meta property="og:title" content="Services: Logo, Ads, Social &amp; Packaging | Trinetra Creations">
+  <meta property="og:description" content="Branding services by Trinetra Creations: logo and identity design, ads and campaigns, social media, and packaging. See what's included and how we work.">
+  <!-- "summary" = the small text card, which works without an image -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Services: Logo, Ads, Social &amp; Packaging | Trinetra Creations">
+  <meta name="twitter:description" content="Branding services by Trinetra Creations: logo and identity design, ads and campaigns, social media, and packaging. See what's included and how we work.">
+
+  <!-- Favicons: same set as every page (see index.html for why the .ico has sizes="32x32") -->
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Fonts (Raleway 500 added on Day 7 for the wordmark) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Raleway:wght@500&display=swap">
+
+  <!-- Shared design system, shared components, then this page's own styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/services.css">
+  <link rel="stylesheet" href="css/order.css">       <!-- order picker (Day 10) -->
+
+  <!-- Plain HTML page: only the nav/footer and the scroll reveal are needed -->
+  <!-- blocking="render" (Day 12): "don't paint the page until this has run",
+       so the header and footer are already there in the very first frame. -->
+  <script src="js/layout.js" defer blocking="render"></script>
+  <script src="js/helpers.js" defer></script>        <!-- escapeHTML, used by order.js -->
+  <script src="js/order.js" defer></script>          <!-- order picker (Day 10) -->
+  <!-- GSAP + ScrollTrigger (Day 12): the animation library, from the jsDelivr CDN.
+       PINNED to 3.15.0 (released 13 April 2026), never "@latest": an update could change
+       how the animations behave without us noticing, and brand-new releases are the
+       most likely to have bugs. integrity = fingerprint of the exact file we tested;
+       if the CDN sends anything else, the browser refuses it and js/motion.js's plain
+       CSS fade-in is used instead. -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"
+          integrity="sha384-XmJ9SoHtVOHoQUcKvFAzVXwdkKo1Ie3bhmSoIAkcdsHGaIrVJIkmozyq0FJeb/Ly"
+          crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"
+          integrity="sha384-wl5TeDVvOWt30Pbf8aSo2ZrzsOjddu3avOBvHe+p+OhJt9gP6w9YXmDkN5DK2/dF"
+          crossorigin="anonymous" defer></script>
+  <script src="js/motion-gsap.js" defer></script>    <!-- our GSAP motion (Day 12) -->
+  <script src="js/motion.js" defer></script>         <!-- CSS fallback; steps aside when GSAP runs -->
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Filled in by js/layout.js -->
+  <header class="site-header" id="site-header">
+    <noscript>
+      <nav class="nav container" aria-label="Main">
+        <a href="index.html">Trinetra Creations</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </noscript>
+  </header>
+
+  <main id="main">
+    <!-- 1. PAGE INTRO + JUMP LINKS -->
+    <section class="page-intro" aria-labelledby="page-title">
+      <div class="container">
+        <span class="eyebrow">Services</span>
+        <h1 id="page-title">Everything your brand needs to be <span class="text-gradient">seen.</span></h1>
+        <p class="page-intro__lead">
+          Four services, one goal: a brand that looks the same, sounds the same
+          and sells the same everywhere your customers meet it.
+        </p>
+
+        <!-- Jump links: a small in-page menu. Each href="#id" scrolls to the
+             section with that id further down this page. -->
+        <nav class="jump-links" aria-label="Services on this page">
+          <ul role="list">
+            <li><a href="#identity">Logo &amp; Identity</a></li>
+            <li><a href="#ads">Ads &amp; Campaigns</a></li>
+            <li><a href="#social">Social Media</a></li>
+            <li><a href="#packaging">Packaging</a></li>
+            <li><a href="#order">Build your order</a></li>
+          </ul>
+        </nav>
+      </div>
+    </section>
+
+    <!-- 2. THE FOUR SERVICES
+         Every service uses the same structure:
+           <section class="service" id="...">   ← the id is the link target (services.html#identity)
+             header: number, title, intro
+             body:   What's included | Who it's for
+             How we work: 4 numbered steps
+         IMPORTANT: the id lives on the <section>, and data-scroll lives on
+         the wrapper INSIDE it. The fade-up moves an element 24px down, and we
+         never want that movement on the element a link jumps to. -->
+
+    <!-- ===== 01 LOGO & IDENTITY ===== -->
+    <section class="service" id="identity" aria-labelledby="identity-title">
+      <div class="container service__inner" data-scroll>
+        <header class="service__head">
+          <span class="service__num text-gradient" aria-hidden="true">01</span>
+          <h2 id="identity-title">Logo &amp; Identity</h2>
+          <p class="service__intro">
+            Your logo is the face of your business. We build a complete identity
+            around it, so every signboard, visiting card and Instagram post looks
+            like it came from the same confident brand.
+          </p>
+        </header>
+
+        <div class="service__details">
+          <div>
+            <h3>What's included</h3>
+            <ul class="tick-list" role="list">
+              <li>Logo concepts, refined into one final mark</li>
+              <li>Colour palette and font pairing</li>
+              <li>Versions for every use: full, icon-only, one-colour</li>
+              <li>Visiting card, letterhead and signboard layouts</li>
+              <li>A simple brand guide (PDF) so anyone can use it correctly</li>
+              <li>All final files for print and web</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Who it's for</h3>
+            <ul class="for-list" role="list">
+              <li>New businesses getting ready to launch</li>
+              <li>Established shops whose logo looks dated</li>
+              <li>Businesses that look different on every sign, bag and page</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- How we work: title + steps wrapped together, so they form ONE grid row
+             (otherwise the grid's row gap opens a big space between them) -->
+        <div class="service__process">
+          <h3 class="process__title">How we work</h3>
+          <ol class="process" role="list">
+            <li><h4>Discover</h4><p>We talk about your business, customers and competitors, and collect what you like and dislike.</p></li>
+            <li><h4>Design</h4><p>We explore several directions and show the strongest as concepts on real mock-ups.</p></li>
+            <li><h4>Refine</h4><p>You pick a direction; we fine-tune shape, colour and type with your feedback.</p></li>
+            <li><h4>Deliver</h4><p>You get every file plus the brand guide, ready for the printer and the web.</p></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 02 ADS & CAMPAIGNS ===== -->
+    <section class="service" id="ads" aria-labelledby="ads-title">
+      <div class="container service__inner" data-scroll>
+        <header class="service__head">
+          <span class="service__num text-gradient" aria-hidden="true">02</span>
+          <h2 id="ads-title">Ads &amp; Campaigns</h2>
+          <p class="service__intro">
+            A good ad says one thing clearly and makes people act. We plan and
+            design campaigns for festivals, launches and offers, in print and online.
+          </p>
+        </header>
+
+        <div class="service__details">
+          <div>
+            <h3>What's included</h3>
+            <ul class="tick-list" role="list">
+              <li>Campaign idea and headline</li>
+              <li>Posters, flyers, banners and hoardings</li>
+              <li>Newspaper and magazine ads</li>
+              <li>Online ad banners in every size you need</li>
+              <li>Festival and seasonal offer designs</li>
+              <li>Print-ready files, sized for your printer or platform</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Who it's for</h3>
+            <ul class="for-list" role="list">
+              <li>Shops planning a festival sale: Diwali, Holi, Eid, New Year</li>
+              <li>Businesses opening a new branch or launching a product</li>
+              <li>Anyone whose ads aren't bringing in calls or visits</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- How we work: title + steps wrapped together, so they form ONE grid row
+             (otherwise the grid's row gap opens a big space between them) -->
+        <div class="service__process">
+          <h3 class="process__title">How we work</h3>
+          <ol class="process" role="list">
+            <li><h4>Discover</h4><p>We agree the goal (footfall, calls or orders), the audience and the budget.</p></li>
+            <li><h4>Design</h4><p>One big idea and headline, shown as layouts in the real sizes.</p></li>
+            <li><h4>Refine</h4><p>We sharpen words and visuals until the message reads in three seconds.</p></li>
+            <li><h4>Deliver</h4><p>Final files for every size and medium, in time for your launch date.</p></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 03 SOCIAL MEDIA ===== -->
+    <section class="service" id="social" aria-labelledby="social-title">
+      <div class="container service__inner" data-scroll>
+        <header class="service__head">
+          <span class="service__num text-gradient" aria-hidden="true">03</span>
+          <h2 id="social-title">Social Media</h2>
+          <p class="service__intro">
+            Your feed is often the first place customers meet you. We make it look
+            consistent and sound like you, so people stop scrolling and start following.
+          </p>
+        </header>
+
+        <div class="service__details">
+          <div>
+            <h3>What's included</h3>
+            <ul class="tick-list" role="list">
+              <li>Profile setup: picture, cover, bio and highlight covers</li>
+              <li>Post and story templates in your brand style</li>
+              <li>A monthly content calendar</li>
+              <li>Designed posts, carousels and reel covers</li>
+              <li>Captions and hashtag sets</li>
+              <li>Festival greetings planned in advance</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Who it's for</h3>
+            <ul class="for-list" role="list">
+              <li>Businesses on Instagram, Facebook or WhatsApp with a mixed-up look</li>
+              <li>Owners too busy to post regularly</li>
+              <li>New brands building an audience from scratch</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- How we work: title + steps wrapped together, so they form ONE grid row
+             (otherwise the grid's row gap opens a big space between them) -->
+        <div class="service__process">
+          <h3 class="process__title">How we work</h3>
+          <ol class="process" role="list">
+            <li><h4>Discover</h4><p>We review your pages and your competitors', and agree goals and tone of voice.</p></li>
+            <li><h4>Design</h4><p>Templates and a first month of posts, all in your brand style.</p></li>
+            <li><h4>Refine</h4><p>We adjust based on what you like and what your followers respond to.</p></li>
+            <li><h4>Deliver</h4><p>Ready-to-post designs and captions on a clear calendar, every month.</p></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 04 PACKAGING ===== -->
+    <section class="service" id="packaging" aria-labelledby="packaging-title">
+      <div class="container service__inner" data-scroll>
+        <header class="service__head">
+          <span class="service__num text-gradient" aria-hidden="true">04</span>
+          <h2 id="packaging-title">Packaging</h2>
+          <p class="service__intro">
+            On a crowded shelf you have a few seconds to be noticed. We design boxes,
+            labels and bags that catch the eye and make the product feel worth its price.
+          </p>
+        </header>
+
+        <div class="service__details">
+          <div>
+            <h3>What's included</h3>
+            <ul class="tick-list" role="list">
+              <li>Box, label, pouch and carry-bag design</li>
+              <li>Advice on shape, size and material</li>
+              <li>Product information layout: ingredients, MRP, FSSAI and barcode</li>
+              <li>Range design, so every flavour or size looks like one family</li>
+              <li>3D mock-ups before anything is printed</li>
+              <li>Print-ready dielines, checked with your printer</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Who it's for</h3>
+            <ul class="for-list" role="list">
+              <li>Food, sweets and FMCG brands launching a product</li>
+              <li>Online sellers who want a memorable unboxing</li>
+              <li>Shops that want premium gift packs for festivals</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- How we work: title + steps wrapped together, so they form ONE grid row
+             (otherwise the grid's row gap opens a big space between them) -->
+        <div class="service__process">
+          <h3 class="process__title">How we work</h3>
+          <ol class="process" role="list">
+            <li><h4>Discover</h4><p>We study your product, price point, shelf and competitors.</p></li>
+            <li><h4>Design</h4><p>Concepts shown as 3D mock-ups, side by side with competitors.</p></li>
+            <li><h4>Refine</h4><p>We polish the details and check every legal text and measurement.</p></li>
+            <li><h4>Deliver</h4><p>Print-ready files with dielines, checked with your printer before the first run.</p></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. BUILD YOUR ORDER (Day 10): the order picker.
+         The product cards and option pills are built by js/order.js from the
+         PRODUCTS list at the top of that file. -->
+    <section class="section order-section" id="order" aria-labelledby="order-title">
+      <div class="container">
+        <div class="section-head" data-scroll>
+          <span class="eyebrow">Order picker</span>
+          <h2 id="order-title">Build your order</h2>
+          <p>Pick what you need and how you'd like it. We'll bring your choices to the free consultation.</p>
+        </div>
+
+        <!-- FALLBACK: shows if JavaScript is off OR js/order.js fails to load.
+             The script removes it once the picker is ready. -->
+        <p class="order-fallback" id="order-fallback">
+          Our order picker needs JavaScript. You can still
+          <a href="consultation.html">book a free consultation</a> and tell us what you need.
+        </p>
+
+        <!-- hidden until js/order.js has built the cards and shows it.
+             class="form" = shared form styles (text boxes, errors) from components.css -->
+        <form class="form order" id="order-form" hidden novalidate>
+          <div class="order__choices">
+
+            <!-- STEP 1: product. <fieldset> + <legend> = a named group of radio buttons -->
+            <fieldset class="order__step">
+              <legend class="order__legend"><span class="order__num" aria-hidden="true">1</span> Choose a product</legend>
+              <div class="product-grid" id="order-products"><!-- radio cards from js/order.js --></div>
+            </fieldset>
+
+            <!-- STEP 2: options. Hidden until a product is chosen. -->
+            <div class="order__step" id="order-options" hidden>
+              <p class="order__legend"><span class="order__num" aria-hidden="true">2</span> Choose your options</p>
+
+              <fieldset class="field order-group" id="order-size" aria-describedby="order-size-error">
+                <legend>Size</legend>  <!-- renamed per product: "Package", "Box size"… -->
+                <div class="pills"></div>
+                <p class="field__error" id="order-size-error"></p>
+              </fieldset>
+
+              <!-- Only shown after "Custom size" is picked -->
+              <div class="field" id="order-custom-field" hidden>
+                <label for="order-custom">Your size <span class="field__optional">(optional, e.g. 10 × 20 ft)</span></label>
+                <input id="order-custom" name="customSize" type="text" maxlength="60">
+              </div>
+
+              <fieldset class="field order-group" id="order-style" aria-describedby="order-style-error">
+                <legend>Style</legend>
+                <div class="pills"></div>
+                <p class="field__error" id="order-style-error"></p>
+              </fieldset>
+
+              <!-- Only for products with a quantity (banners, flyers, packaging) -->
+              <div class="field order-qty" id="order-qty-field" hidden>
+                <label for="order-qty">Quantity</label>  <!-- text set per product -->
+                <!-- type="number" + inputmode="numeric" = number keypad on phones -->
+                <input id="order-qty" name="quantity" type="number" inputmode="numeric"
+                       min="1" max="100000" step="1" aria-describedby="order-qty-error">
+                <p class="field__error" id="order-qty-error"></p>
+              </div>
+
+              <div class="field">
+                <label for="order-notes">Notes <span class="field__optional">(optional)</span></label>
+                <textarea id="order-notes" name="notes" rows="3" maxlength="500"
+                          placeholder="For example: Diwali offer, our shop name, colours we like."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- THE LIVE SUMMARY (sticky on desktop) -->
+          <aside class="card order-summary" aria-labelledby="order-summary-title">
+            <h3 id="order-summary-title" class="order-summary__title">Your order</h3>
+            <div class="order-summary__art" id="sum-art">
+              <!-- empty art until a product is chosen -->
+              <span class="order-art order-art--empty" aria-hidden="true"></span>
+            </div>
+
+            <!-- aria-live="polite": screen readers announce changes in here
+                 (product, size, style, quantity) once they finish speaking.
+                 aria-atomic="false": only the changed row is read, not the whole list. -->
+            <dl class="order-summary__list" aria-live="polite" aria-atomic="false">
+              <div><dt>Product</dt><dd id="sum-product">Choose a product to start</dd></div>
+              <div><dt id="sum-size-label">Size</dt><dd id="sum-size">Not chosen yet</dd></div>
+              <div><dt>Style</dt><dd id="sum-style">Not chosen yet</dd></div>
+              <div id="sum-qty-row" hidden><dt>Quantity</dt><dd id="sum-qty"></dd></div>
+            </dl>
+            <!-- Notes OUTSIDE the live region: reading out every typed letter would be noise -->
+            <dl class="order-summary__list order-summary__notes">
+              <div><dt>Notes</dt><dd id="sum-notes">None yet</dd></div>
+            </dl>
+
+            <p class="order-summary__quote">No prices here: we will share a quote after the free consultation.</p>
+            <button class="btn btn--primary form__submit order-summary__btn" type="submit">Request this order</button>
+            <!-- "Please choose a product first" etc. role="alert" = read out at once -->
+            <p class="form-status" id="order-error" role="alert"></p>
+          </aside>
+        </form>
+      </div>
+    </section>
+
+    <!-- 4. CLOSING CALL TO ACTION (shared component) -->
+    <section class="section" aria-labelledby="cta-title">
+      <div class="container">
+        <div class="cta-band" data-scroll>
+          <h2 id="cta-title">Not sure which service you need?</h2>
+          <p>Don't know how to advertise yourself? Ask us, we will guide you.</p>
+          <a class="btn btn--primary" href="consultation.html">Book a free consultation</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Filled in by js/layout.js -->
+  <footer class="site-footer" id="site-footer"></footer>
+</body>
+</html>

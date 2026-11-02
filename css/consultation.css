@@ -1,0 +1,110 @@
+/* =========================================================
+   Trinetra Creations: Free Consultation page styles (Day 8)
+   Loaded only by consultation.html, after style.css and components.css.
+   Page intro, .card and .section-head come from components.css.
+   NOTE: the form styles (section 3) will move to components.css
+   when the Contact page needs the same fields.
+   Mobile-first: base rules = phones, @media adds wider layouts.
+   ========================================================= */
+
+/* ---------- 1. Intro ---------- */
+/* The headline is a full sentence, so it's a bit smaller and wider than
+   other page intros (the shared rule caps h1 at 14ch). */
+.consult-intro h1 {
+  max-width: 20ch;
+  font-size: clamp(2.25rem, 1.4rem + 4vw, 4.5rem);
+}
+.consult-intro h1 .text-gradient {
+  display: inline-block;            /* gradient fits the words, not the whole line */
+  padding-bottom: 0.08em;           /* stops background-clip cutting the descenders */
+}
+.consult-intro__btn { margin-top: var(--space-8); }
+
+/* The steps section sits right under the intro: no extra top gap */
+.section.consult-steps { padding-top: var(--space-8); }
+
+/* ---------- 2. Three steps ---------- */
+/* list-style: none + padding: 0 remove the browser's "1. 2. 3." (our reset only covers <ul>) */
+.steps {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+  counter-reset: step;
+}
+@media (min-width: 768px) {
+  .steps { grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+}
+.step { counter-increment: step; }
+/* Big gradient number from the CSS counter: 01, 02, 03 */
+.step::before {
+  content: counter(step, decimal-leading-zero);
+  display: inline-block;
+  margin-bottom: var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.step h3 { font-size: 1.375rem; }
+.step p { margin-top: var(--space-2); color: var(--color-text-muted); }
+
+/* ---------- 3. The form ---------- */
+/* The "Fill in the form" button jumps to the form heading.
+   scroll-margin-top keeps it clear of the sticky header (Day 7 lesson). */
+#form-title { scroll-margin-top: calc(var(--nav-height) + var(--space-8)); }
+
+/* All other form styles (fields, errors, checkboxes, thank-you) now live in
+   css/components.css, section 8, because the Contact form uses them too. */
+
+
+/* ---------- 4. FAQ ---------- */
+.faq {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 50rem;
+}
+.faq__item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  transition: border-color var(--duration);
+}
+.faq__item[open] { border-color: rgba(224, 33, 138, 0.5); }
+
+/* <summary> is the clickable question line */
+.faq__item summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 48px;
+  padding: var(--space-4) var(--space-6);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;                 /* hides the default ▶ triangle (Firefox, Chrome) */
+}
+.faq__item summary::-webkit-details-marker { display: none; }   /* hides it in Safari */
+
+/* Our own "+" sign, which turns into "×" when the answer is open */
+.faq__item summary::after {
+  content: "+";
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--color-saffron);
+  transition: transform var(--duration) var(--ease-out);
+}
+.faq__item[open] summary::after { transform: rotate(45deg); }
+
+/* Rounded focus ring that matches the box */
+.faq__item summary:focus-visible { border-radius: var(--radius-md); }
+
+.faq__item p {
+  padding: 0 var(--space-6) var(--space-6);
+  color: var(--color-text-muted);
+}

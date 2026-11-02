@@ -1,0 +1,186 @@
+/* =========================================================
+   Trinetra Creations: Services page styles (Day 7)
+   Loaded only by services.html, after style.css and components.css.
+   Page intro and CTA band come from components.css.
+   Mobile-first: base rules = phones, @media adds wider layouts.
+   ========================================================= */
+
+/* ---------- 1. Jump links (pill links under the intro) ---------- */
+.jump-links { margin-top: var(--space-8); }
+.jump-links ul {
+  display: flex;
+  flex-wrap: wrap;                  /* wrap onto a second row on phones */
+  gap: var(--space-2);
+}
+.jump-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;                 /* comfortable tap size */
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: color var(--duration), border-color var(--duration);
+}
+.jump-links a:hover {
+  color: var(--color-text);
+  border-color: var(--color-magenta);
+}
+
+/* ---------- 2. One service block ---------- */
+.service {
+  padding-block: var(--space-16);
+  border-top: 1px solid var(--color-border);   /* a quiet divider between services */
+
+  /* THE KEY LINE FOR THE #identity / #ads / ... LINKS.
+     When the browser scrolls to this section (because the URL ends in #ads),
+     it stops this far BELOW the top of the window instead of at the very top.
+     Without it, our sticky header (72px) would sit on top of the heading.
+     calc() = do maths in CSS: header height + a little breathing room. */
+  scroll-margin-top: calc(var(--nav-height) + var(--space-4));
+}
+@media (min-width: 768px) {
+  .service { padding-block: var(--space-24); }
+}
+
+/* Header: number, title, intro.
+   Desktop: the inner block becomes a 2-column grid; the header sits on
+   the left and STICKS while you scroll through the details on the right. */
+.service__inner {
+  display: grid;
+  gap: var(--space-8);
+}
+@media (min-width: 1024px) {
+  .service__inner {
+    grid-template-columns: 1fr 1.6fr;
+    column-gap: var(--space-16);
+    row-gap: var(--space-12);
+  }
+  .service__head {
+    grid-row: span 2;               /* the left column covers both right-hand rows (details, process) */
+    align-self: start;
+    position: sticky;               /* follows you down while you read the details */
+    top: calc(var(--nav-height) + var(--space-8));
+  }
+}
+
+.service__num {
+  display: inline-block;
+  padding-bottom: 0.08em;           /* stops background-clip cutting off the digits */
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: 1;
+}
+.service__head h2 { margin-top: var(--space-3); }
+.service__intro {
+  margin-top: var(--space-4);
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+}
+
+/* "What's included" and "Who it's for": stacked on phones, side by side from tablets */
+.service__details {
+  display: grid;
+  gap: var(--space-8);
+}
+@media (min-width: 640px) {
+  .service__details { grid-template-columns: 1.3fr 1fr; }
+}
+
+/* Small uppercase sub-headings, same style for all three h3s */
+.service__details h3,
+.process__title {
+  margin-bottom: var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-saffron);
+}
+
+/* Lists with a custom marker drawn by ::before (instead of the default bullet) */
+.tick-list,
+.for-list { display: grid; gap: var(--space-3); }
+.tick-list li,
+.for-list li {
+  position: relative;
+  padding-left: var(--space-8);
+}
+
+/* Tick: an "L" shape (two borders) rotated 45° */
+.tick-list li::before {
+  content: "";
+  position: absolute;
+  left: 0.3rem;
+  top: 0.35em;
+  width: 0.45rem;
+  height: 0.8rem;
+  border-right: 2px solid var(--color-saffron);
+  border-bottom: 2px solid var(--color-saffron);
+  transform: rotate(45deg);
+}
+
+/* "For" marker: a small gradient dot */
+.for-list li { color: var(--color-text-muted); }
+.for-list li::before {
+  content: "";
+  position: absolute;
+  left: 0.35rem;
+  top: 0.6em;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--gradient-brand);
+}
+
+/* ---------- 3. How we work: 4 numbered steps ----------
+   A CSS counter writes 01, 02, 03, 04 (no numbers typed in the HTML).
+   Phones: 1 column. Tablets: 2 x 2. Wide screens inside the right column: still 2 x 2,
+   because the right column is too narrow for 4 readable boxes. */
+/* list-style: none + padding: 0 remove the browser's own "1. 2. 3." numbers.
+   (style.css only resets ul[role="list"], and this is an <ol>.) */
+.process {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+  counter-reset: step;
+}
+@media (min-width: 640px) { .process { grid-template-columns: repeat(2, 1fr); } }
+
+.process li {
+  position: relative;
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  counter-increment: step;
+}
+/* decimal-leading-zero = 01, 02 ... */
+.process li::before {
+  content: counter(step, decimal-leading-zero);
+  display: block;
+  margin-bottom: var(--space-2);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--color-magenta);
+}
+.process h4 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+.process p {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* The CTA section after the last service gets a divider too */
+.service + .section { border-top: 1px solid var(--color-border); }
