@@ -241,11 +241,22 @@
         </div>
 
         <article class="team-card" data-scroll>
-          <!-- role="img" + aria-label make screen readers treat the block as one picture. -->
-          <div class="team-card__photo team-card__photo--placeholder"
-               role="img" aria-label="Photo of Ashutosh Mishra (coming soon)">
+          <!-- PHOTO in a gradient frame. The frame (gradient + initials) sits BEHIND the
+               photo, so it shows while the photo loads and if the file is missing.
+               - alt: the only thing a screen reader says here (the initials are aria-hidden)
+               - width/height: the file's real size, so the browser knows its shape early
+               - loading="lazy": far below the fold, so download it only when scrolled near
+               - onerror: file failed → make the photo invisible (NOT removed, so the alt
+                 text is still read out) and let the gradient + "AM" show through.
+               Team member without a photo yet? Leave out the <img> and add
+               role="img" aria-label="Photo of NAME (coming soon)" to this <div>, plus
+               <span class="team-card__soon" aria-hidden="true">Photo coming soon</span>. -->
+          <div class="team-card__photo team-card__photo--placeholder">
             <span class="team-card__initials" aria-hidden="true">AM</span>
-            <span class="team-card__soon" aria-hidden="true">Photo coming soon</span>
+            <img class="team-card__img" src="assets/team/ashutosh-mishra.jpg"
+                 alt="Ashutosh Mishra, CEO of Trinetra Creations"
+                 width="600" height="600" loading="lazy"
+                 onerror="this.classList.add('is-broken')">
           </div>
 
           <div class="team-card__body">

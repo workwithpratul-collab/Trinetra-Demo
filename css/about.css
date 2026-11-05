@@ -170,6 +170,26 @@
     radial-gradient(circle at 75% 20%, rgba(255, 255, 255, 0.22), transparent 45%),
     linear-gradient(150deg, var(--color-violet), var(--color-magenta) 60%, var(--color-saffron));
 }
+/* The real photo, laid exactly over the gradient frame.
+   position: absolute + inset: 0 = cover the frame edge to edge; the frame's own
+   aspect-ratio keeps its size, so the page can't jump when the photo arrives.
+   height: 100% beats the global "img { height: auto }" (a class is more specific).
+   object-fit: cover = crop, never stretch. The photo is square and the frame is
+   portrait, so the sides get cropped; 55% keeps the face (a bit right of centre)
+   in view, 30% favours the top if the frame is ever made wider. */
+.team-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 55% 30%;
+  border-radius: inherit;           /* same rounded corners as the frame */
+}
+/* Added by onerror in about.html when the file can't load: hide the broken-image
+   icon. opacity (not display: none) keeps the alt text available to screen readers. */
+.team-card__img.is-broken { opacity: 0; }
+
 .team-card__initials {
   font-family: var(--font-brand);
   font-weight: 500;
