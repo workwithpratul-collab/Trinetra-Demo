@@ -66,7 +66,10 @@
   <!-- Shared design system, shared components, then this page's own styles -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/about.css">
+  <!-- ?v=16 = "cache-busting": a new address each time about.css changes, so a browser
+       can't pair this page with an OLD saved copy of the file. Raise the number whenever
+       you edit css/about.css (Day 16: the photo showed under "AM" with the old CSS). -->
+  <link rel="stylesheet" href="css/about.css?v=16">
 
   <!-- This page is plain HTML, so it only needs the nav/footer and the scroll reveal -->
   <!-- blocking="render" (Day 12): "don't paint the page until this has run",
@@ -241,22 +244,24 @@
         </div>
 
         <article class="team-card" data-scroll>
-          <!-- PHOTO in a gradient frame. The frame (gradient + initials) sits BEHIND the
-               photo, so it shows while the photo loads and if the file is missing.
+          <!-- PHOTO in a gradient frame. The photo covers the whole frame; the gradient +
+               "AM" behind it are only a FALLBACK, shown if the photo fails to load.
                - alt: the only thing a screen reader says here (the initials are aria-hidden)
                - width/height: the file's real size, so the browser knows its shape early
                - loading="lazy": far below the fold, so download it only when scrolled near
                - onerror: file failed → make the photo invisible (NOT removed, so the alt
-                 text is still read out) and let the gradient + "AM" show through.
+                 text is still read out); CSS then shows the gradient + "AM".
+               ORDER MATTERS: the <img> comes BEFORE the initials, so CSS can hide "AM"
+               while the photo is fine (.team-card__img:not(.is-broken) + .team-card__initials).
                Team member without a photo yet? Leave out the <img> and add
                role="img" aria-label="Photo of NAME (coming soon)" to this <div>, plus
                <span class="team-card__soon" aria-hidden="true">Photo coming soon</span>. -->
           <div class="team-card__photo team-card__photo--placeholder">
-            <span class="team-card__initials" aria-hidden="true">AM</span>
             <img class="team-card__img" src="assets/team/ashutosh-mishra.jpg"
                  alt="Ashutosh Mishra, CEO of Trinetra Creations"
                  width="600" height="600" loading="lazy"
                  onerror="this.classList.add('is-broken')">
+            <span class="team-card__initials" aria-hidden="true">AM</span>
           </div>
 
           <div class="team-card__body">
